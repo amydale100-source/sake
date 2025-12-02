@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cocktail App</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="images/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+</head>
+<body>
+  <header>
+    <h1>AI侍酒師 🍸</h1>
+  </header>
+
+  <section id="search">
+    <input type="text" id="nameInput" placeholder="酒名搜尋">
+    <select id="baseSelect">
+      <option value="">基酒選擇</option>
+      <option value="gin">Gin</option>
+      <option value="vodka">Vodka</option>
+      <option value="rum">Rum</option>
+      <option value="tequila">Tequila</option>
+      <option value="whiskey">Whiskey</option>
+      <option value="brandy">Brandy</option>
+    </select>
+    <select id="strengthSelect">
+      <option value="">濃度選擇</option>
+      <option value="light">Light</option>
+      <option value="medium">Medium</option>
+      <option value="strong">Strong</option>
+    </select>
+    <button id="searchBtn">搜尋</button>
+  </section>
+
+  <section id="results"></section>
+
+  <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(() => console.log('✅ Service Worker 註冊成功'))
+        .catch(err => console.error('❌ SW 註冊失敗', err));
+    }
+  </script>
+</body>
+</html>
