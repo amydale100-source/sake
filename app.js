@@ -652,17 +652,28 @@ function displayResults(results) {
 
   results.forEach(c => {
     const card = document.createElement('div');
-    card.className = 'card';
+    card.className = `card ${c.strength}`;
     card.innerHTML = `
-      <h2>${c.name_zh} (${c.name_en})</h2>
-      <p>基酒: ${c.base}</p>
-      <p>濃度: ${c.strength} | ABV: ${c.abv}%</p>
-      <p>材料: ${c.ingredients.join(', ')}</p>
-      <!-- 未來圖片空間 -->
-      <div class="cocktail-image">
-        <!-- <img src="images/${c.name_en}.png" alt="${c.name_en}"> -->
-      </div>
-    `;
+  <!-- 酒醉程度圖（半透明，右側，文字後方）-->
+  <div class="drunk-bg"></div>
+
+  <!-- 左側為文字內容（2/3） -->
+  <div class="card-content">
+    <h2>${c.name_zh} (${c.name_en})</h2>
+    <p><strong>基酒:</strong> ${c.base}</p>
+    <p><strong>濃度:</strong> ${c.strength} | ABV: ${c.abv}%</p>
+    <p><strong>材料:</strong> ${c.ingredients.join(', ')}</p>
+  </div>
+
+  <!-- 右側為圖片或圖示（1/3）-->
+  <div class="card-side">
+    <div class="card-image">
+      <!-- 未來啟用時放 img 或 background-image -->
+      <!-- <img src="images/cocktails/${c.image}" alt="${c.name_en}"> -->
+    </div>
+  </div>
+`;
+
     container.appendChild(card);
   });
 }

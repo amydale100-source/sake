@@ -67,50 +67,106 @@ body {
   gap: 15px;
 }
 
+/* --- 卡片左右分欄（左 2/3 文字，右 1/3 圖） --- */
 .card {
+  display: grid;
+  grid-template-columns: 2fr 1fr; /* 左 2/3，右 1/3 */
+  gap: 12px;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
   background: white;
-  padding: 15px;
-  border-radius: 16px;
+  padding: 14px;
+  border-radius: 12px;
   box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-  border-left: 5px solid #C7A14A;
+  border-left: 5px solid #C7A14A; /* 你原本風格 */
 }
 
-.card-image {
-  width: 100%;
-  height: 180px;
-  background: #DDD;
-  border-radius: 12px;
-  margin-bottom: 10px;
+/* 文字區 */
+.card-content {
+  z-index: 2; /* 確保文字在最上層 */
+}
 
+/* 右側容器（放圖片） */
+.card-side {
+  position: relative;
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #777;
-  font-size: 13px;
+  z-index: 2;
 }
 
-.card-image::after {
-  content: "圖片預留區";
+/* 圖片區（可用 background 或 <img>）*/
+.card-image {
+  width: 100%;
+  height: 120px;              /* 桌機/手機可視需要調整 */
+  border-radius: 10px;
+  background-color: #eee;     /* 還沒圖時佔位顏色 */
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
-h2 {
-  margin: 0 0 8px 0;
+/* 若使用 img 標籤（建議這樣放圖片），讓它完整填滿 */
+.card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
-p {
-  margin: 4px 0;
-  font-size: 14px;
+/* --- 右側酒醉半透明背景（會填滿右側區塊） --- */
+.drunk-bg {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 40%;          /* 讓背景在右側佔比（可調） */
+  height: 100%;
+  opacity: 0.12;       /* 半透明強度 */
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center right;
+  z-index: 1;          /* 在文字下方，但在卡片底色上方 */
+  pointer-events: none;
 }
 
-@media (min-width: 768px) {
-  #results {
-    grid-template-columns: repeat(2, 1fr);
+/* 根據濃度顯示不同圖（請把圖放 images/drunk-*.png）*/
+.card.light .drunk-bg {
+  background-image: url("images/drunk-light.png");
+}
+.card.medium .drunk-bg {
+  background-image: url("images/drunk-medium.png");
+}
+.card.strong .drunk-bg {
+  background-image: url("images/drunk-strong.png");
+}
+
+/* 保持文字在最上面 */
+.card-content, .card-side {
+  position: relative;
+  z-index: 2;
+}
+
+/* 小螢幕改成垂直排列（手機友好） */
+@media (max-width: 720px) {
+  .card {
+    grid-template-columns: 1fr;  /* 變成上下堆疊，文字在上，圖在下 */
+    gap: 10px;
+  }
+  .card-image {
+    height: 160px;
+  }
+  .drunk-bg {
+    width: 60%;
+    opacity: 0.10;
+    right: -5%;
+    background-position: center;
   }
 }
 
-@media (min-width: 1200px) {
-  #results {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
 
