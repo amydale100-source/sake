@@ -235,7 +235,7 @@ const cocktails = [ {
     },
     {
         "name_en": "Bloody Maria",
-        "name_zh": "瑪麗亞",
+        "name_zh": "血腥瑪麗",
         "base": "tequila",
         "strength": "medium",
         "abv": 10,
@@ -308,7 +308,7 @@ const cocktails = [ {
     },
     {
         "name_en": "Sidecar",
-        "name_zh": "邊車",
+        "name_zh": "側車",
         "base": "brandy",
         "strength": "medium",
         "abv": 24,
@@ -332,7 +332,7 @@ const cocktails = [ {
     },
     {
         "name_en": "Between the Sheets",
-        "name_zh": "兩人之間",
+        "name_zh": "床笫之間",
         "base": "brandy",
         "strength": "medium",
         "abv": 22,
@@ -345,7 +345,7 @@ const cocktails = [ {
     },
     {
         "name_en": "French Connection",
-        "name_zh": "法式聯誼",
+        "name_zh": "法蘭西集團",
         "base": "brandy",
         "strength": "strong",
         "abv": 28,
@@ -356,7 +356,7 @@ const cocktails = [ {
     },
     {
         "name_en": "Stinger",
-        "name_zh": "毒螫",
+        "name_zh": "毒刺/史汀格",
         "base": "brandy",
         "strength": "strong",
         "abv": 28,
@@ -383,7 +383,7 @@ const cocktails = [ {
     },
 {
     "name_en": "Espresso Martini",
-    "name_zh": "濃縮馬丁尼",
+    "name_zh": "咖啡馬丁尼",
     "base": "vodka",
     "strength": "medium",
     "abv": 18,
@@ -421,7 +421,7 @@ const cocktails = [ {
 },
 {
     "name_en": "Blue Lagoon",
-    "name_zh": "藍色潟湖",
+    "name_zh": "藍色珊瑚礁",
     "base": "vodka",
     "strength": "light",
     "abv": 10,
@@ -433,7 +433,7 @@ const cocktails = [ {
 },
 {
     "name_en": "Caipirinha",
-    "name_zh": "凱匹林納",
+    "name_zh": "卡琵莉亞",
     "base": "rum",
     "strength": "medium",
     "abv": 18,
@@ -444,8 +444,8 @@ const cocktails = [ {
     ]
 },
 {
-    "name_en": "Dark and Stormy",
-    "name_zh": "黑暗與暴風",
+    "name_en": "Dark 'N' Stormy",
+    "name_zh": "月黑風高/黑色風暴",
     "base": "rum",
     "strength": "medium",
     "abv": 16,
@@ -470,7 +470,7 @@ const cocktails = [ {
 },
 {
     "name_en": "Mint Julep",
-    "name_zh": "薄荷朱烈普",
+    "name_zh": "薄荷茱莉普",
     "base": "whiskey",
     "strength": "medium",
     "abv": 18,
@@ -496,7 +496,7 @@ const cocktails = [ {
 },
 {
     "name_en": "Rusty Nail",
-    "name_zh": "生鏽鐵釘",
+    "name_zh": "鏽釘",
     "base": "whiskey",
     "strength": "strong",
     "abv": 28,
@@ -676,4 +676,5 @@ function displayResults(results) {
 
     container.appendChild(card);
   });
+
 }
