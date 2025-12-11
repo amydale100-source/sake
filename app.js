@@ -621,7 +621,23 @@ const cocktails = [ {
 // 初始化顯示全部
 window.addEventListener('DOMContentLoaded', () => {
   displayResults(cocktails);
+
+  // --- 新增背景動態切換 ---
+  const background = document.querySelector('.background-container');
+  const baseSelect = document.getElementById('baseSelect');
+
+  baseSelect.addEventListener('change', () => {
+    const base = baseSelect.value.toLowerCase();
+    if (base) {
+      background.style.backgroundImage = `url('images/bg/${base}.jpg')`;
+    } else {
+      background.style.backgroundImage = '';
+    }
+  });
 });
+
+
+
 
 // 搜尋 & 篩選
 document.getElementById('searchBtn').addEventListener('click', () => {
@@ -631,15 +647,34 @@ document.getElementById('searchBtn').addEventListener('click', () => {
 
   let results = cocktails;
 
-  if(base) results = results.filter(c => c.base.toLowerCase() === base);
-  if(strength) results = results.filter(c => c.strength.toLowerCase() === strength);
-  if(name) results = results.filter(c =>
-    c.name_en.toLowerCase().includes(name) ||
-    c.name_zh.includes(name)
-  );
+  // 先套用基酒 / 濃度（這部分不需要模糊）
+  if (base) results = results.filter(c => c.base.toLowerCase() === base);
+  if (strength) results = results.filter(c => c.strength.toLowerCase() === strength);
+
+  // ⭐ 模糊搜尋 (需要連網)
+  if (name && window.fuseReady) {
+    const fuse = new Fuse(results, {
+      keys: ["name_en", "name_zh"],
+      threshold: 0.35, // 越小越嚴格，可調整
+      distance: 100
+    });
+
+    const fuzzyResults = fuse.search(name).map(r => r.item);
+    displayResults(fuzzyResults);
+    return;
+  }
+
+  // 🎯 離線 → 使用精準搜尋
+  if (name) {
+    results = results.filter(c =>
+      c.name_en.toLowerCase().includes(name) ||
+      c.name_zh.includes(name)
+    );
+  }
 
   displayResults(results);
 });
+
 
 function displayResults(results) {
   const container = document.getElementById('results');
@@ -651,30 +686,133 @@ function displayResults(results) {
   }
 
   results.forEach(c => {
-    const card = document.createElement('div');
-    card.className = `card ${c.strength}`;
-    card.innerHTML = `
-  <!-- 酒醉程度圖（半透明，右側，文字後方）-->
-  <div class="drunk-bg"></div>
+    const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+const isFav = favorites.includes(c.name_en);
 
-  <!-- 左側為文字內容（2/3） -->
+const card = document.createElement('div');
+card.className = 'card';
+
+card.innerHTML = `
   <div class="card-content">
-    <h2>${c.name_zh} (${c.name_en})</h2>
-    <p><strong>基酒:</strong> ${c.base}</p>
-    <p><strong>濃度:</strong> ${c.strength} | ABV: ${c.abv}%</p>
-    <p><strong>材料:</strong> ${c.ingredients.join(', ')}</p>
-  </div>
+    <div class="card-text">
+      <h2>${c.name_zh} (${c.name_en})</h2>
+      <p>基酒: ${c.base}</p>
+      <p>濃度: ${c.strength} | ABV: ${c.abv}%</p>
+      <p>材料: ${c.ingredients.join(', ')}</p>
 
-  <!-- 右側為圖片或圖示（1/3）-->
-  <div class="card-side">
-    <div class="card-image">
-      <!-- 未來啟用時放 img 或 background-image -->
-      <!-- <img src="images/cocktails/${c.image}" alt="${c.name_en}"> -->
+      <button class="favorite-btn ${isFav ? 'active' : ''}" data-name="${c.name_en}">
+        ${isFav ? '💛 已收藏' : '🤍 收藏這杯'}
+      </button>
+    </div>
+
+    <div class="cocktail-image">
+      <!-- 之後可以放圖片 -->
     </div>
   </div>
 `;
+const btn = card.querySelector('.favorite-btn');
 
+btn.addEventListener('click', () => {
+  let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+
+  // 切換收藏狀態
+  if (favorites.includes(c.name_en)) {
+    favorites = favorites.filter(name => name !== c.name_en);
+    btn.classList.remove('active');
+    btn.textContent = '🤍 收藏這杯';
+  } else {
+    favorites.push(c.name_en);
+    btn.classList.add('active');
+    btn.textContent = '💛 已收藏';
+  }
+
+  // 存回 localStorage
+  localStorage.setItem('favorites', JSON.stringify(favorites));
+
+  const showFavBtn = document.getElementById('showFavBtn');
+  const inFavoriteMode = showFavBtn.classList.contains('active');
+
+  // 🔥 關鍵：收藏模式下「最後一個被取消」
+  if (inFavoriteMode && favorites.length === 0) {
+    console.log("已清空收藏，自動跳回全部");   //測試用
+    showFavBtn.classList.remove('active');
+    showFavBtn.textContent = "💛 只看我的收藏";
+    displayResults(cocktails);
+    return;
+  }
+
+  // 如果還在收藏模式 → 即時刷新收藏清單
+  if (inFavoriteMode) {
+    const favResults = cocktails.filter(c => favorites.includes(c.name_en));
+    displayResults(favResults);
+  }
+});
     container.appendChild(card);
   });
-
 }
+// 只顯示收藏的酒
+document.getElementById('showFavBtn').addEventListener('click', () => {
+  const btn = document.getElementById('showFavBtn');
+  const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+
+  // 沒收藏
+  if (favorites.length === 0) {
+    displayResults([]);
+    return;
+  }
+
+  // 過濾出收藏的酒
+  const favResults = cocktails.filter(c => favorites.includes(c.name_en));
+
+  // 切換按鈕樣式
+  btn.classList.toggle('active');
+
+  // 如果目前是 active → 顯示收藏，否則顯示全部
+  if (btn.classList.contains('active')) {
+    btn.textContent = "📜 顯示全部";
+    displayResults(favResults);
+  } else {
+    btn.textContent = "💛 我的收藏";
+    displayResults(cocktails);
+  }
+});
+/* ===========================
+   🍸 搜尋狀態提示燈控制
+   =========================== */
+const cup = document.querySelector('.cup');
+const liquid = document.querySelector('.liquid');
+const overflow = document.querySelector('.overflow');
+const statusLabel = document.getElementById('statusLabel');
+
+/* 判斷是否有 Fuse 模糊搜尋（代表在線） */
+function updateSearchMode() {
+  if (window.Fuse) {
+    cup.classList.add("online");
+    statusLabel.textContent = "模糊搜尋（需網路）";
+  } else {
+    cup.classList.remove("online");
+    statusLabel.textContent = "離線搜尋";
+  }
+}
+updateSearchMode();
+
+/* 讓杯子慢慢斟滿 */
+function animateCup() {
+  liquid.style.height = "100%";
+
+  // 模擬再倒超過 → 溢出
+  setTimeout(() => {
+    cup.classList.add("overflowing");
+  }, 900);
+
+  // 重置（下一次搜尋可重新播放動畫）
+  setTimeout(() => {
+    liquid.style.height = "0%";
+    cup.classList.remove("overflowing");
+  }, 1500);
+}
+
+/* 綁到搜尋按鈕 */
+document.getElementById('searchBtn').addEventListener('click', () => {
+  animateCup();
+});
