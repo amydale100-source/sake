@@ -7,34 +7,37 @@
   <link rel="stylesheet" href="style.css">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="images/icon-192.png">
+
   <!-- LINE / Facebook / 社群預覽設定 (Open Graph) -->
-<meta property="og:title" content="SAKE" />
-<meta property="og:description" content="AI 侍酒師 🍸~再喝一杯，不醉不歸~" />
-<meta property="og:image" content="https://amydale100-source.github.io/sake/images/preview.png" />
-<meta property="og:url" content="https://amydale100-source.github.io/sake/" />
-<meta property="og:type" content="website" />
+  <meta property="og:title" content="SAKE" />
+  <meta property="og:description" content="AI 侍酒師 🍸~再喝一杯，不醉不歸~" />
+  <meta property="og:image" content="https://amydale100-source.github.io/sake/images/preview.png" />
+  <meta property="og:url" content="https://amydale100-source.github.io/sake/" />
+  <meta property="og:type" content="website" />
 
-<!-- iPhone 分享用（可選但建議）-->
-<meta name="apple-mobile-web-app-title" content="AI 侍酒師" />
-
+  <!-- iPhone 分享用 -->
+  <meta name="apple-mobile-web-app-title" content="AI 侍酒師" />
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
   <script src="https://cdn.jsdelivr.net/npm/fuse.js/dist/fuse.min.js" defer></script>
-
 </head>
-<body>
-  <div class="background-container"></div>
-  <header>
-    <header class="app-header">
-  <div class="logo-box">LOGO</div>
-  <h1>SAKE</h1>
-  <div class="subtitle">AI 侍酒師 🍸~再喝一杯，不醉不歸~</div>
-</header>
 
+<body>
+  <!-- 動態背景 -->
+  <div class="background-container"></div>
+
+  <!-- 頂部 Header -->
+  <header class="app-header">
+    <div class="logo-box">LOGO</div>
+    <h1>SAKE</h1>
+    <div class="subtitle">AI 侍酒師 🍸~再喝一杯，不醉不歸~</div>
   </header>
 
+  <!-- 搜尋區 -->
   <section id="search">
     <input type="text" id="nameInput" placeholder="酒名搜尋">
+
     <select id="baseSelect">
       <option value="">基酒選擇</option>
       <option value="gin">Gin</option>
@@ -44,79 +47,31 @@
       <option value="whiskey">Whiskey</option>
       <option value="brandy">Brandy</option>
     </select>
+
     <select id="strengthSelect">
       <option value="">濃度選擇</option>
       <option value="light">Light</option>
       <option value="medium">Medium</option>
       <option value="strong">Strong</option>
     </select>
+
     <button id="searchBtn">搜尋</button>
     <button id="showFavBtn">💛 我的收藏</button>
-    <!-- 搜尋狀態酒杯 -->
-<div id="searchStatus" class="status-wrapper">
-  <div class="cup">
-    <div class="liquid"></div>
-    <div class="overflow"></div>
-  </div>
-  <span id="statusLabel" class="label">離線模式</span>
-</div>
-
-</section>
-
   </section>
 
+  <!-- 結果區 -->
   <section id="results"></section>
-<script>
-  let fuseReady = false;
 
-  document.addEventListener("DOMContentLoaded", () => {
-    const status = document.getElementById("searchStatus");
-    const liquid = status.querySelector(".liquid");
-    const label = status.querySelector(".label");
-
-    // 檢查 Fuse 是否成功載入
-    if (window.Fuse) {
-      fuseReady = true;
-
-      status.classList.remove("offline");
-      status.classList.add("online");
-
-      label.textContent = "模糊搜尋已啟用";
-
-      // 🟢 金色液體慢慢斟滿（80%）
-      setTimeout(() => {
-        liquid.style.height = "80%";
-      }, 200);
-
-      console.log("🔍 Fuse.js 載入成功 → 使用模糊搜尋");
-
-    } else {
-      fuseReady = false;
-
-      status.classList.remove("online");
-      status.classList.add("offline");
-
-      label.textContent = "離線搜尋模式";
-
-      // 🔴 灰色液體慢慢斟滿（50%）
-      setTimeout(() => {
-        liquid.style.height = "50%";
-      }, 200);
-
-      console.log("🎯 Fuse.js 載入失敗 → 使用精準搜尋");
-    }
-  });
-</script>
-
-
-
+  <!-- 已移除 searchStatus 酒杯 UI，不需要這段 JS -->
   <script src="app.js"></script>
+
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js')
         .then(() => console.log('✅ Service Worker 註冊成功'))
         .catch(err => console.error('❌ SW 註冊失敗', err));
-    }
+
+}
   </script>
 </body>
 </html>

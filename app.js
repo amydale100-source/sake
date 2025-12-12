@@ -639,41 +639,52 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
 
-// 搜尋 & 篩選
+// 搜尋 & 篩選（改良版）
 document.getElementById('searchBtn').addEventListener('click', () => {
   const base = document.getElementById('baseSelect').value.toLowerCase();
   const strength = document.getElementById('strengthSelect').value.toLowerCase();
-  const name = document.getElementById('nameInput').value.toLowerCase();
+  const nameInput = document.getElementById('nameInput').value.trim().toLowerCase();
 
   let results = cocktails;
 
-  // 先套用基酒 / 濃度（這部分不需要模糊）
+  // 先做基酒 & 濃度篩選（所有模式共用）
   if (base) results = results.filter(c => c.base.toLowerCase() === base);
   if (strength) results = results.filter(c => c.strength.toLowerCase() === strength);
 
-  // ⭐ 模糊搜尋 (需要連網)
-  if (name && window.fuseReady) {
-    const fuse = new Fuse(results, {
-      keys: ["name_en", "name_zh"],
-      threshold: 0.35, // 越小越嚴格，可調整
-      distance: 100
-    });
-
-    const fuzzyResults = fuse.search(name).map(r => r.item);
-    displayResults(fuzzyResults);
+  // 沒有文字搜尋就直接顯示
+  if (!nameInput) {
+    displayResults(results);
     return;
   }
 
-  // 🎯 離線 → 使用精準搜尋
-  if (name) {
-    results = results.filter(c =>
-      c.name_en.toLowerCase().includes(name) ||
-      c.name_zh.includes(name)
-    );
-  }
+  // 先取得 initials
+  const initialsInput = nameInput.split(/\s+/).map(w => w[0]).join("");
 
-  displayResults(results);
+  // === 強化模糊搜尋 ===
+  // 自訂 Fuse keys：英文/中文/首字母
+  const fuse = new Fuse(results, {
+    keys: ["name_en", "name_zh", "initials"],
+    threshold: 0.35,
+    includeScore: true,
+  });
+
+  // 用 Fuse 去搜尋
+  const fuseRes = fuse.search(nameInput).map(r => r.item);
+
+  // 再做一次 initials 搜尋（補上例如 GT -> GinTonic）
+  const initialMatch = results.filter(c => c.initials.toLowerCase().includes(initialsInput));
+
+  // 合併並去重
+  const combined = [
+    ...new Set([
+      ...fuseRes,
+      ...initialMatch
+    ])
+  ];
+
+  displayResults(combined);
 });
+
 
 
 function displayResults(results) {
@@ -776,43 +787,5 @@ document.getElementById('showFavBtn').addEventListener('click', () => {
     displayResults(cocktails);
   }
 });
-/* ===========================
-   🍸 搜尋狀態提示燈控制
-   =========================== */
-const cup = document.querySelector('.cup');
-const liquid = document.querySelector('.liquid');
-const overflow = document.querySelector('.overflow');
-const statusLabel = document.getElementById('statusLabel');
 
-/* 判斷是否有 Fuse 模糊搜尋（代表在線） */
-function updateSearchMode() {
-  if (window.Fuse) {
-    cup.classList.add("online");
-    statusLabel.textContent = "模糊搜尋（需網路）";
-  } else {
-    cup.classList.remove("online");
-    statusLabel.textContent = "離線搜尋";
-  }
-}
-updateSearchMode();
 
-/* 讓杯子慢慢斟滿 */
-function animateCup() {
-  liquid.style.height = "100%";
-
-  // 模擬再倒超過 → 溢出
-  setTimeout(() => {
-    cup.classList.add("overflowing");
-  }, 900);
-
-  // 重置（下一次搜尋可重新播放動畫）
-  setTimeout(() => {
-    liquid.style.height = "0%";
-    cup.classList.remove("overflowing");
-  }, 1500);
-}
-
-/* 綁到搜尋按鈕 */
-document.getElementById('searchBtn').addEventListener('click', () => {
-  animateCup();
-});

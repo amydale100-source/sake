@@ -31,10 +31,11 @@ body > *:not(.background-container) {
 .app-header {
   text-align: center;
   padding: 20px;
-  background: #2E1F14;
+  background: linear-gradient(135deg, #102542, #1b263b);
   color: white;
   border-bottom: 4px solid #C7A14A;
 }
+
 
 .logo-box {
   width: 100px;
@@ -98,60 +99,54 @@ body > *:not(.background-container) {
   margin-top: 50vh;   /* 酒瓶占中央 50% 高度 */
 }
 
-/* --- 卡片左右分欄（左 2/3 文字，右 1/3 圖） --- */
+/* --- 統一卡片大小 + 更透明背景 --- */
 .card {
   display: grid;
-  grid-template-columns: 2fr 1fr; /* 左 2/3，右 1/3 */
+  grid-template-columns: 2fr 1fr;
   gap: 12px;
   align-items: center;
   position: relative;
   overflow: hidden;
-  background: rgba(255,255,255,0.95);
+
+  /* 卡片固定大小（高度統一）*/
+  width: 90%;
+  max-width: 360px;
+  min-height: 180px;   /* 🔥 固定高度，所有卡片統一 */
+
   padding: 14px;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-  border-left: 5px solid #C7A14A; /* 你原本風格 */
-  max-width: 360px; /* 桌機/手機避免太寬 */
-  margin: 0 auto;   /* 置中 */
+  margin: 0 auto;
+
+  /* 🔥 更透明的玻璃卡片效果 */
+  background: rgba(255, 255, 255, 0.15); /* 透明度從 0.95 → 0.25 */
+  backdrop-filter: blur(12px);
+
+  border-radius: 14px;
+  border-left: 5px solid #C7A14A;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 }
 
-/* 文字區 */
-.card-content {
-  z-index: 2; /* 確保文字在最上層 */
-}
-
-/* 右側容器（放圖片） */
-.card-side {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2;
-}
-
-/* 圖片區（可用 background 或 <img>）*/
+/* 右側圖片區高度固定 → 避免因文字變多壓縮 */
 .card-image {
   width: 100%;
-  height: 120px;              /* 桌機/手機可視需要調整 */
+  height: 120px;  
   border-radius: 10px;
-  background-color: #eee;     /* 還沒圖時佔位顏色 */
   background-size: cover;
   background-position: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   overflow: hidden;
 }
 
-/* 若使用 img 標籤（建議這樣放圖片），讓它完整填滿 */
-.card-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
+/* 讓文字不要撐開卡片 */
+.card-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
+
+/* 收藏按鈕永遠在下面 */
+.favorite-btn {
+  margin-top: auto;
+}
+
 
 /* --- 右側酒醉半透明背景（會填滿右側區塊） --- */
 .drunk-bg {
@@ -237,72 +232,6 @@ body > *:not(.background-container) {
   color: #2E1F14;
 }
 
-/* ===========================
-   🍸 搜尋狀態酒杯樣式
-   =========================== */
-.status-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-left: 10px;
-}
-
-.cup {
-  width: 40px;
-  height: 55px;
-  position: relative;
-  border: 3px solid #5a4636;
-  border-radius: 0 0 12px 12px;
-  overflow: hidden;
-  background: rgba(255,255,255,0.6);
-}
-
-/* 手機版自適應 */
-@media (max-width: 500px) {
-  .cup {
-    width: 32px;
-    height: 44px;
-  }
-}
-
-.liquid {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  height: 0%;
-  background: #d8c7a0;
-  transition: height 0.9s ease;
-}
-
-/* 在線模式（會變彩色雞尾酒） */
-.cup.online .liquid {
-  background: linear-gradient(180deg, #ff4f81, #ffb84d);
-}
-
-/* 溢出特效 */
-.overflow {
-  position: absolute;
-  top: -8px;
-  width: 100%;
-  height: 0px;
-  border-radius: 50%;
-  background: rgba(255, 111, 97, 0.5);
-  opacity: 0;
-  transition: opacity 0.4s ease, height 0.4s ease;
-}
-
-.cup.overflowing .overflow {
-  height: 8px;
-  opacity: 1;
-}
-
-/* 標籤文字 */
-.label {
-  font-size: 12px;
-  margin-top: 4px;
-  color: #5a4636;
-  text-align: center;
-}
 
 
 
