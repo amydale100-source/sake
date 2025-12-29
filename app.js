@@ -640,51 +640,66 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
 // 搜尋 & 篩選（改良版）
-document.getElementById('searchBtn').addEventListener('click', () => {
+function runSearch({ skipName = false } = {}) {
   const base = document.getElementById('baseSelect').value.toLowerCase();
   const strength = document.getElementById('strengthSelect').value.toLowerCase();
-  const nameInput = document.getElementById('nameInput').value.trim().toLowerCase();
+  const nameInput = skipName
+    ? ""
+    : document.getElementById('nameInput').value.trim().toLowerCase();
 
   let results = cocktails;
 
-  // 先做基酒 & 濃度篩選（所有模式共用）
+  // 基酒 & 濃度（永遠會跑）
   if (base) results = results.filter(c => c.base.toLowerCase() === base);
   if (strength) results = results.filter(c => c.strength.toLowerCase() === strength);
 
-  // 沒有文字搜尋就直接顯示
+  // 沒有名稱搜尋 → 直接顯示
   if (!nameInput) {
     displayResults(results);
     return;
   }
 
-  // 先取得 initials
-  const initialsInput = nameInput.split(/\s+/).map(w => w[0]).join("");
+  // === 模糊搜尋 ===
+  if (window.Fuse) {
+    const fuse = new Fuse(results, {
+      keys: ["name_en", "name_zh", "initials"],
+      threshold: 0.35,
+    });
 
-  // === 強化模糊搜尋 ===
-  // 自訂 Fuse keys：英文/中文/首字母
-  const fuse = new Fuse(results, {
-    keys: ["name_en", "name_zh", "initials"],
-    threshold: 0.35,
-    includeScore: true,
-  });
+    const fuzzy = fuse.search(nameInput).map(r => r.item);
+    const initialsInput = nameInput.replace(/\s+/g, "");
 
-  // 用 Fuse 去搜尋
-  const fuseRes = fuse.search(nameInput).map(r => r.item);
+    const initialMatch = results.filter(c =>
+      (c.initials || "").toLowerCase().includes(initialsInput)
+    );
 
-  // 再做一次 initials 搜尋（補上例如 GT -> GinTonic）
-  const initialMatch = results.filter(c => c.initials.toLowerCase().includes(initialsInput));
+    const combined = [...new Set([...fuzzy, ...initialMatch])];
+    displayResults(combined);
+    return;
+  }
 
-  // 合併並去重
-  const combined = [
-    ...new Set([
-      ...fuseRes,
-      ...initialMatch
-    ])
-  ];
+  // === 精準搜尋（保底）===
+  const exact = results.filter(c =>
+    c.name_en.toLowerCase().includes(nameInput) ||
+    c.name_zh.includes(nameInput)
+  );
 
-  displayResults(combined);
+  displayResults(exact);
+}
+document.getElementById('searchBtn').addEventListener('click', () => {
+  runSearch();
 });
 
+
+
+// 🔥 自動篩選（基酒 / 濃度）
+document.getElementById('baseSelect').addEventListener('change', () => {
+  runSearch({ skipName: true });
+});
+
+document.getElementById('strengthSelect').addEventListener('change', () => {
+  runSearch({ skipName: true });
+});
 
 
 function displayResults(results) {
