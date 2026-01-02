@@ -31,24 +31,30 @@ body > *:not(.background-container) {
 .app-header {
   text-align: center;
   padding: 20px;
-  background: linear-gradient(135deg, #102542, #1b263b);
+  background: linear-gradient(135deg, #5273a1, #1b263b);
   color: white;
   border-bottom: 4px solid #C7A14A;
 }
 
 
 .logo-box {
-  width: 100px;
-  height: 100px;
-  margin: 0 auto 10px;
-  border-radius: 50%;
-  background: #444;
   display: flex;
-  align-items: center;
   justify-content: center;
-  color: #aaa;
-  font-size: 12px;
+  margin-bottom: 10px;
 }
+
+.logo-box img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+
+  background: rgba(255,255,255,0.15); /* 微底色 */
+  padding: 6px;                       /* 呼吸感 */
+  box-shadow: 0 0 12px rgba(255,255,255,0.35); /* 微發光 */
+}
+
+
 
 .subtitle {
   font-size: 14px;
