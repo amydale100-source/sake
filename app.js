@@ -198,7 +198,7 @@ function toggleFavorite(cocktail, btn) {
 
     localStorage.setItem('favorites', JSON.stringify(favorites));
 
-    // 處理收藏模式下的即時刷新
+    // 只有在收藏模式下才重新渲染頁面
     if (inFavoriteMode) {
         if (favorites.length === 0) {
             // 如果收藏清空了，自動切換回全部顯示
@@ -211,6 +211,7 @@ function toggleFavorite(cocktail, btn) {
             displayResults(favResults);
         }
     }
+    // 如果不在收藏模式，什麼都不做（按鈕狀態已經更新了）
 }
 
 // --- 8. 「我的收藏」切換按鈕 ---
@@ -232,6 +233,7 @@ document.getElementById('showFavBtn').addEventListener('click', function() {
         displayResults(cocktails);
     }
 });
+
 
 
 
