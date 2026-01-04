@@ -1,6 +1,5 @@
-[
-    {
-         "name_en": "Gin Tonic",
+ [{
+        "name_en": "Gin Tonic",
         "name_zh": "琴通寧",
         "base": "gin",
         "strength": "light",
@@ -235,15 +234,16 @@
         ]
     },
     {
-        "name_en": "Bloody Maria",
+        "name_en": "Bloody Mary",
         "name_zh": "血腥瑪麗",
-        "base": "tequila",
+        "base": "vodka",
         "strength": "medium",
-        "abv": 10,
+        "abv": 12,
         "ingredients": [
-            "龍舌蘭 45ml",
-            "蕃茄汁 120ml",
-            "香料、胡椒"
+            "伏特加 Vodka 45ml",
+            "番茄汁 90ml",
+            "檸檬汁 15ml",
+            "辣醬油、辣椒汁、鹽、胡椒"
         ]
     },
     {
@@ -615,7 +615,629 @@
         "糖漿 Syrup 10ml",
         "香檳 Champagne Top up"
     ]
-}
+},
+{
+        "name_en": "Martinez",
+        "name_zh": "馬丁尼茲",
+        "base": "gin",
+        "strength": "strong",
+        "abv": 25,
+        "ingredients": [
+            "琴酒 Gin 45ml",
+            "甜苦艾酒 Sweet Vermouth 45ml",
+            "黑櫻桃利口酒 Maraschino 1茶匙",
+            "柑橘苦精 2 dashes"
+        ]
+},
+{
+        "name_en": "White Lady",
+        "name_zh": "白色佳人",
+        "base": "gin",
+        "strength": "medium",
+        "abv": 22,
+        "ingredients": [
+            "琴酒 Gin 40ml",
+            "君度橙酒 Cointreau 30ml",
+            "檸檬汁 Lemon juice 20ml"
+        ]
+    },
+    {
+        "name_en": "Last Word",
+        "name_zh": "最後的話",
+        "base": "gin",
+        "strength": "strong",
+        "abv": 26,
+        "ingredients": [
+            "琴酒 Gin 22.5ml",
+            "夏翠絲綠利口酒 Green Chartreuse 22.5ml",
+            "黑櫻桃利口酒 Maraschino 22.5ml",
+            "萊姆汁 Lime juice 22.5ml"
+        ]
+    },
+    {
+        "name_en": "Corpse Reviver #2",
+        "name_zh": "屍體復活2號",
+        "base": "gin",
+        "strength": "medium",
+        "abv": 20,
+        "ingredients": [
+            "琴酒 Gin 22.5ml",
+            "麗葉酒 Lillet Blanc 22.5ml",
+            "君度橙酒 Cointreau 22.5ml",
+            "檸檬汁 22.5ml",
+            "苦艾酒 Absinthe 1 dash"
+        ]
+    },
+    {
+        "name_en": "Vesper",
+        "name_zh": "維斯帕",
+        "base": "gin",
+        "strength": "strong",
+        "abv": 30,
+        "ingredients": [
+            "琴酒 Gin 45ml",
+            "伏特加 Vodka 15ml",
+            "麗葉酒 Lillet Blanc 7.5ml",
+            "檸檬皮捲"
+        ]
+    },
+    {
+        "name_en": "Bee's Knees",
+        "name_zh": "蜜蜂膝蓋",
+        "base": "gin",
+        "strength": "medium",
+        "abv": 18,
+        "ingredients": [
+            "琴酒 Gin 50ml",
+            "蜂蜜水 Honey water 20ml",
+            "檸檬汁 Lemon juice 20ml"
+        ]
+    },
+    {
+        "name_en": "Bramble",
+        "name_zh": "黑莓棘",
+        "base": "gin",
+        "strength": "light",
+        "abv": 15,
+        "ingredients": [
+            "琴酒 Gin 40ml",
+            "檸檬汁 Lemon juice 15ml",
+            "糖漿 Syrup 10ml",
+            "黑莓利口酒 Creme de Mure 15ml"
+        ]
+    },
+    {
+        "name_en": "Clover Club",
+        "name_zh": "幸運草俱樂部",
+        "base": "gin",
+        "strength": "medium",
+        "abv": 16,
+        "ingredients": [
+            "琴酒 Gin 45ml",
+            "覆盆子糖漿 15ml",
+            "檸檬汁 15ml",
+            "蛋白 1個"
+        ]
+    },
+    {
+        "name_en": "Hanky Panky",
+        "name_zh": "勾心鬥角",
+        "base": "gin",
+        "strength": "strong",
+        "abv": 24,
+        "ingredients": [
+            "琴酒 Gin 45ml",
+            "甜苦艾酒 Sweet Vermouth 45ml",
+            "費內特·布蘭卡 Fernet-Branca 2 dashes"
+        ]
+    },
+    {
+        "name_en": "Southside",
+        "name_zh": "南方",
+        "base": "gin",
+        "strength": "medium",
+        "abv": 18,
+        "ingredients": [
+            "琴酒 Gin 60ml",
+            "萊姆汁 Lime juice 30ml",
+            "糖漿 Syrup 22.5ml",
+            "薄荷葉 Mint leaves 6-8片"
+        ]
+    },
+    {
+        "name_en": "Sazerac",
+        "name_zh": "薩澤拉克",
+        "base": "whiskey",
+        "strength": "strong",
+        "abv": 32,
+        "ingredients": [
+            "黑麥威士忌或白蘭地 60ml",
+            "苦艾酒 Absinthe 沖洗杯壁",
+            "方糖 1塊",
+            "裴喬氏苦精 Peychaud's bitters 3 dashes"
+        ]
+    },
+    {
+        "name_en": "Rob Roy",
+        "name_zh": "羅伯羅伊",
+        "base": "whiskey",
+        "strength": "strong",
+        "abv": 28,
+        "ingredients": [
+            "蘇格蘭威士忌 45ml",
+            "甜苦艾酒 Sweet Vermouth 22.5ml",
+            "安格氏苦精 2 dashes"
+        ]
+    },
+    {
+        "name_en": "Vieux Carré",
+        "name_zh": "老廣場",
+        "base": "whiskey",
+        "strength": "strong",
+        "abv": 28,
+        "ingredients": [
+            "黑麥威士忌 30ml",
+            "白蘭地 30ml",
+            "甜苦艾酒 30ml",
+            "班尼迪克汀 D.O.M 1茶匙",
+            "安格氏與裴喬氏苦精 各2 dashes"
+        ]
+    },
+    {
+        "name_en": "Paper Plane",
+        "name_zh": "紙飛機",
+        "base": "whiskey",
+        "strength": "medium",
+        "abv": 18,
+        "ingredients": [
+            "波本威士忌 22.5ml",
+            "阿瑪羅草本酒 Amaro Nonino 22.5ml",
+            "阿佩羅 Aperol 22.5ml",
+            "檸檬汁 22.5ml"
+        ]
+    },
+    {
+        "name_en": "New York Sour",
+        "name_zh": "紐約酸酒",
+        "base": "whiskey",
+        "strength": "medium",
+        "abv": 18,
+        "ingredients": [
+            "威士忌 60ml",
+            "檸檬汁 30ml",
+            "糖漿 22.5ml",
+            "紅葡萄酒(浮層) 15ml"
+        ]
+    },
+    {
+        "name_en": "Blood and Sand",
+        "name_zh": "碧血黃沙",
+        "base": "whiskey",
+        "strength": "medium",
+        "abv": 16,
+        "ingredients": [
+            "蘇格蘭威士忌 22.5ml",
+            "櫻桃白蘭地 22.5ml",
+            "甜苦艾酒 22.5ml",
+            "柳橙汁 22.5ml"
+        ]
+    },
+    {
+        "name_en": "Irish Coffee",
+        "name_zh": "愛爾蘭咖啡",
+        "base": "whiskey",
+        "strength": "light",
+        "abv": 10,
+        "ingredients": [
+            "愛爾蘭威士忌 40ml",
+            "熱咖啡 80ml",
+            "鮮奶油 30ml",
+            "紅糖 1茶匙"
+        ]
+    },
+    {
+        "name_en": "Toronto",
+        "name_zh": "多倫多",
+        "base": "whiskey",
+        "strength": "strong",
+        "abv": 30,
+        "ingredients": [
+            "黑麥威士忌 60ml",
+            "費內特·布蘭卡 7.5ml",
+            "糖漿 7.5ml",
+            "安格氏苦精 2 dashes"
+        ]
+    },
+    {
+        "name_en": "Monte Carlo",
+        "name_zh": "蒙地卡羅",
+        "base": "whiskey",
+        "strength": "strong",
+        "abv": 28,
+        "ingredients": [
+            "黑麥威士忌 60ml",
+            "班尼迪克汀 D.O.M 15ml",
+            "安格氏苦精 2 dashes"
+        ]
+    },
+    {
+        "name_en": "Bobby Burns",
+        "name_zh": "羅伯特·伯恩斯",
+        "base": "whiskey",
+        "strength": "strong",
+        "abv": 26,
+        "ingredients": [
+            "蘇格蘭威士忌 30ml",
+            "甜苦艾酒 30ml",
+            "班尼迪克汀 D.O.M 15ml"
+        ]
+    },
+    {
+        "name_en": "Hemingway Daiquiri",
+        "name_zh": "海明威黛綺莉",
+        "base": "rum",
+        "strength": "medium",
+        "abv": 20,
+        "ingredients": [
+            "白蘭姆酒 60ml",
+            "黑櫻桃利口酒 15ml",
+            "葡萄柚汁 15ml",
+            "萊姆汁 15ml"
+        ]
+    },
+    {
+        "name_en": "Jungle Bird",
+        "name_zh": "叢林鳥",
+        "base": "rum",
+        "strength": "medium",
+        "abv": 14,
+        "ingredients": [
+            "黑蘭姆酒 45ml",
+            "金巴利 Campari 22.5ml",
+            "鳳梨汁 45ml",
+            "萊姆汁 15ml",
+            "糖漿 15ml"
+        ]
+    },
+    {
+        "name_en": "El Presidente",
+        "name_zh": "總統",
+        "base": "rum",
+        "strength": "medium",
+        "abv": 24,
+        "ingredients": [
+            "白蘭姆酒 45ml",
+            "白苦艾酒 Dry Vermouth 22.5ml",
+            "橙酒 15ml",
+            "紅石榴糖漿 1 dash"
+        ]
+    },
+    {
+        "name_en": "Planter's Punch",
+        "name_zh": "種植者之吻",
+        "base": "rum",
+        "strength": "medium",
+        "abv": 15,
+        "ingredients": [
+            "深色蘭姆酒 45ml",
+            "柳橙汁 35ml",
+            "鳳梨汁 35ml",
+            "檸檬汁 20ml",
+            "紅石榴糖漿 10ml"
+        ]
+    },
+    {
+        "name_en": "Mary Pickford",
+        "name_zh": "瑪麗畢克馥",
+        "base": "rum",
+        "strength": "medium",
+        "abv": 18,
+        "ingredients": [
+            "白蘭姆酒 45ml",
+            "鳳梨汁 45ml",
+            "黑櫻桃利口酒 1茶匙",
+            "紅石榴糖漿 1茶匙"
+        ]
+    },
+    {
+        "name_en": "Knickerbocker",
+        "name_zh": "尼克博克",
+        "base": "rum",
+        "strength": "medium",
+        "abv": 18,
+        "ingredients": [
+            "蘭姆酒 45ml",
+            "橙酒 15ml",
+            "覆盆子糖漿 15ml",
+            "檸檬汁 15ml"
+        ]
+    },
+    {
+        "name_en": "Cable Car",
+        "name_zh": "叮噹車",
+        "base": "rum",
+        "strength": "medium",
+        "abv": 18,
+        "ingredients": [
+            "香料蘭姆酒 45ml",
+            "橙酒 22.5ml",
+            "檸檬汁 22.5ml",
+            "糖漿 15ml"
+        ]
+    },
+    {
+        "name_en": "Mezcal Margarita",
+        "name_zh": "梅斯卡爾瑪格麗特",
+        "base": "tequila",
+        "strength": "medium",
+        "abv": 22,
+        "ingredients": [
+            "梅斯卡爾酒 Mezcal 45ml",
+            "橙酒 22.5ml",
+            "萊姆汁 22.5ml",
+            "龍舌蘭糖漿 1茶匙"
+        ]
+    },
+    {
+        "name_en": "El Diablo",
+        "name_zh": "惡魔",
+        "base": "tequila",
+        "strength": "light",
+        "abv": 12,
+        "ingredients": [
+            "龍舌蘭 Tequila 45ml",
+            "黑醋栗利口酒 15ml",
+            "萊姆汁 15ml",
+            "薑汁汽水 補滿"
+        ]
+    },
+    {
+        "name_en": "Naked and Famous",
+        "name_zh": "赤裸與名聲",
+        "base": "tequila",
+        "strength": "medium",
+        "abv": 20,
+        "ingredients": [
+            "梅斯卡爾 Mezcal 22.5ml",
+            "阿佩羅 Aperol 22.5ml",
+            "夏翠絲黃利口酒 22.5ml",
+            "萊姆汁 22.5ml"
+        ]
+    },
+    {
+        "name_en": "Tommy's Margarita",
+        "name_zh": "湯米瑪格麗特",
+        "base": "tequila",
+        "strength": "medium",
+        "abv": 20,
+        "ingredients": [
+            "龍舌蘭 Tequila 60ml",
+            "萊姆汁 30ml",
+            "龍舌蘭糖漿 15ml"
+        ]
+    },
+    {
+        "name_en": "Matador",
+        "name_zh": "鬥牛士",
+        "base": "tequila",
+        "strength": "light",
+        "abv": 12,
+        "ingredients": [
+            "龍舌蘭 Tequila 45ml",
+            "鳳梨汁 60ml",
+            "萊姆汁 15ml"
+        ]
+    },
+    
+    {
+        "name_en": "Salty Dog",
+        "name_zh": "鹹狗",
+        "base": "vodka",
+        "strength": "light",
+        "abv": 12,
+        "ingredients": [
+            "伏特加 Vodka 45ml",
+            "葡萄柚汁 90ml",
+            "杯口鹽圈"
+        ]
+    },
+    {
+        "name_en": "Lemon Drop Martini",
+        "name_zh": "檸檬糖馬丁尼",
+        "base": "vodka",
+        "strength": "medium",
+        "abv": 20,
+        "ingredients": [
+            "伏特加 Vodka 50ml",
+            "橙酒 20ml",
+            "檸檬汁 15ml",
+            "糖漿 10ml"
+        ]
+    },
+    {
+        "name_en": "Harvey Wallbanger",
+        "name_zh": "哈維撞牆",
+        "base": "vodka",
+        "strength": "light",
+        "abv": 14,
+        "ingredients": [
+            "伏特加 Vodka 45ml",
+            "柳橙汁 90ml",
+            "加利安諾 Galliano 利口酒 15ml"
+        ]
+    },
+    {
+        "name_en": "Pisco Sour",
+        "name_zh": "皮斯可酸酒",
+        "base": "brandy",
+        "strength": "medium",
+        "abv": 18,
+        "ingredients": [
+            "皮斯可酒 Pisco 60ml",
+            "檸檬汁 30ml",
+            "糖漿 20ml",
+            "蛋白 1個",
+            "安格氏苦精 1 dash"
+        ]
+    },
+    {
+        "name_en": "Metropolitan",
+        "name_zh": "大都會(白蘭地版)",
+        "base": "brandy",
+        "strength": "medium",
+        "abv": 22,
+        "ingredients": [
+            "白蘭地 60ml",
+            "甜苦艾酒 30ml",
+            "糖漿 1茶匙",
+            "安格氏苦精 2 dashes"
+        ]
+    },
+    {
+        "name_en": "Japanese Cocktail",
+        "name_zh": "日本雞尾酒",
+        "base": "brandy",
+        "strength": "medium",
+        "abv": 24,
+        "ingredients": [
+            "干邑白蘭地 60ml",
+            "杏仁糖漿 Orgeat 15ml",
+            "安格氏苦精 2 dashes"
+        ]
+    },
+    {
+        "name_en": "Aperol Spritz",
+        "name_zh": "阿佩羅氣泡酒",
+        "base": "wine",
+        "strength": "light",
+        "abv": 9,
+        "ingredients": [
+            "阿佩羅 Aperol 60ml",
+            "普羅賽柯氣泡酒 Prosecco 90ml",
+            "蘇打水 補滿",
+            "柳橙片"
+        ]
+    },
+    {
+        "name_en": "Grasshopper",
+        "name_zh": "綠色蚱蜢",
+        "base": "liqueur",
+        "strength": "light",
+        "abv": 14,
+        "ingredients": [
+            "薄荷利口酒 30ml",
+            "白可可利口酒 30ml",
+            "鮮奶油 30ml"
+        ]
+    },
+    {
+        "name_en": "Golden Cadillac",
+        "name_zh": "金色凱迪拉克",
+        "base": "liqueur",
+        "strength": "light",
+        "abv": 14,
+        "ingredients": [
+            "加利安諾利口酒 30ml",
+            "白可可利口酒 30ml",
+            "鮮奶油 30ml"
+        ]
+    },
+    {
+        "name_en": "Bamboo",
+        "name_zh": "斑布/竹子",
+        "base": "wine",
+        "strength": "light",
+        "abv": 16,
+        "ingredients": [
+            "雪莉酒 Sherry 45ml",
+            "白苦艾酒 Dry Vermouth 45ml",
+            "柑橘苦精 2 dashes"
+        ]
+    },
+    {
+        "name_en": "Bijou",
+        "name_zh": "寶石",
+        "base": "gin",
+        "strength": "strong",
+        "abv": 26,
+        "ingredients": [
+            "琴酒 Gin 30ml",
+            "夏翠絲綠利口酒 30ml",
+            "甜苦艾酒 30ml",
+            "橙皮苦精 1 dash"
+        ]
+    },
+    {
+        "name_en": "Pimm's Cup",
+        "name_zh": "皮姆之杯",
+        "base": "liqueur",
+        "strength": "light",
+        "abv": 6,
+        "ingredients": [
+            "Pimm's No.1 50ml",
+            "檸檬汽水或薑汁汽水 150ml",
+            "各種新鮮水果片(小黃瓜、草莓、薄荷)"
+        ]
+    },
+    {
+        "name_en": "Garibaldi",
+        "name_zh": "加里波第",
+        "base": "liqueur",
+        "strength": "light",
+        "abv": 8,
+        "ingredients": [
+            "金巴利 Campari 45ml",
+            "現榨柳橙汁 120ml"
+        ]
+    },
+    {
+        "name_en": "Kir",
+        "name_zh": "基爾",
+        "base": "wine",
+        "strength": "light",
+        "abv": 12,
+        "ingredients": [
+            "白葡萄酒 90ml",
+            "黑醋栗利口酒 15ml"
+        ]
+    },
+    {
+        "name_en": "Gin Fizz",
+        "name_zh": "琴費士",
+        "base": "gin",
+        "strength": "light",
+        "abv": 10,
+        "ingredients": [
+            "琴酒 Gin 45ml",
+            "檸檬汁 30ml",
+            "糖漿 15ml",
+            "蘇打水 補滿"
+        ]
+    },
+    {
+        "name_en": "Sloe Gin Fizz",
+        "name_zh": "野莓琴費士",
+        "base": "gin",
+        "strength": "light",
+        "abv": 10,
+        "ingredients": [
+            "野莓琴酒 Sloe Gin 45ml",
+            "檸檬汁 30ml",
+            "糖漿 10ml",
+            "蘇打水 補滿"
+        ]
+    },
+    {
+        "name_en": "Adonis",
+        "name_zh": "阿多尼斯",
+        "base": "wine",
+        "strength": "light",
+        "abv": 15,
+        "ingredients": [
+            "雪莉酒 Sherry 45ml",
+            "甜苦艾酒 Sweet Vermouth 45ml",
+            "橙皮苦精 2 dashes"
+        ]
+    }
 
-
-]
+ ]
