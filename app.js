@@ -4,7 +4,7 @@ let cocktails = [];
 // 2. 初始化：從 JSON 載入資料
 window.addEventListener('DOMContentLoaded', async () => {
     try {
-        const res = await fetch('cocktails.json');
+        const res = await fetch('data/cocktails.json');
         if (!res.ok) throw new Error('連線回應不正常');
         
         cocktails = await res.json();
@@ -22,18 +22,14 @@ window.addEventListener('DOMContentLoaded', async () => {
 const background = document.querySelector('.background-container');
 const baseSelect = document.getElementById('baseSelect');
 
-// 設定初始預設背景
-background.style.backgroundImage = `url('images/bg/bg.jpg')`;
-
 baseSelect.addEventListener('change', () => {
     const base = baseSelect.value.toLowerCase();
     
-    // 如果選擇了有效的基酒(不是空值或'other'),就換成對應背景
     if (base && base !== 'other') {
         background.style.backgroundImage = `url('images/bg/${base}.jpg')`;
     } else {
-        // 如果選擇'other'或清空選擇,恢復預設背景
-        background.style.backgroundImage = `url('images/bg/bg.jpg')`;
+        // 移除 inline style,讓 CSS 預設背景生效
+        background.style.backgroundImage = '';
     }
 });
 
@@ -215,8 +211,4 @@ document.getElementById('showFavBtn').addEventListener('click', function() {
         displayResults(cocktails);
     }
 });
-
-
-
-
 

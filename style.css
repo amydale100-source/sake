@@ -13,6 +13,7 @@ body {
 }
 
 .background-container {
+  background-image: url('images/bg/bg.jpg');
   position: fixed;   /* 固定在螢幕後面 */
   top: 0;
   left: 0;
@@ -21,6 +22,7 @@ body {
   background-size: cover;
   background-position: center;
   z-index: 0;        /* 放在最底層 */
+  transition: background-image 0.3s ease; /* 可選:增加切換動畫 */
 }
 
 body > *:not(.background-container) {
@@ -159,7 +161,7 @@ body > *:not(.background-container) {
   position: absolute;
   right: 0;
   top: 0;
-  width: 40%;          /* 讓背景在右側佔比（可調） */
+  width: 70%;          /* 讓背景在右側佔比（可調） */
   height: 100%;
   opacity: 0.12;       /* 半透明強度 */
   background-size: contain;
