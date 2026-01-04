@@ -1,20 +1,21 @@
 {
-  "name": "AI 侍酒師",
-  "short_name": "AI 侍酒師",
-  "start_url": ".",
+  "name": "SAKE",
+  "short_name": "SAKE",
+  "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#ff6600",
+  "background_color": "#0b132b",
+  "theme_color": "#0b132b",
   "icons": [
     {
-      "src": "images/icon-192.png",
+      "src": "images/icon/192.jpg",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/jpg"
     },
     {
-      "src": "images/icon-512.png",
+      "src": "images/icon/512.jpg",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/jpg"
     }
   ]
 }
+
