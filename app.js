@@ -1,5 +1,8 @@
 // 1. 全域變數
 let cocktails = []; 
+// 🔥 在這裡加入自動滾動的全域變數
+let autoScrollInterval = null;
+let scrollSpeed = 0;
 
 // 2. 初始化：從 JSON 載入資料
 window.addEventListener('DOMContentLoaded', async () => {
@@ -124,7 +127,7 @@ document.getElementById('searchBtn').addEventListener('click', () => runSearch()
 document.getElementById('baseSelect').addEventListener('change', () => runSearch({ skipName: true }));
 document.getElementById('strengthSelect').addEventListener('change', () => runSearch({ skipName: true }));
 
-// --- 6. 渲染結果到畫面上 ---
+
 // --- 6. 渲染結果到畫面上 ---
 function displayResults(results) {
     const container = document.getElementById('results');
@@ -183,7 +186,40 @@ function displayResults(results) {
     });
 }
 
-// 🔥 新增:設定拖曳事件
+// 🔥 在這裡加入自動滾動函數（在 displayResults 之後）
+function startAutoScroll(clientY) {
+    const viewportHeight = window.innerHeight;
+    const scrollZone = 100;
+    const maxSpeed = 15;
+    
+    if (clientY < scrollZone) {
+        const ratio = (scrollZone - clientY) / scrollZone;
+        scrollSpeed = -ratio * maxSpeed;
+    } else if (clientY > viewportHeight - scrollZone) {
+        const ratio = (clientY - (viewportHeight - scrollZone)) / scrollZone;
+        scrollSpeed = ratio * maxSpeed;
+    } else {
+        scrollSpeed = 0;
+        stopAutoScroll();
+        return;
+    }
+    
+    if (!autoScrollInterval && scrollSpeed !== 0) {
+        autoScrollInterval = setInterval(() => {
+            window.scrollBy(0, scrollSpeed);
+        }, 16);
+    }
+}
+
+function stopAutoScroll() {
+    if (autoScrollInterval) {
+        clearInterval(autoScrollInterval);
+        autoScrollInterval = null;
+    }
+    scrollSpeed = 0;
+}
+
+// 🔥 修改現有的 setupDragEvents 函數
 function setupDragEvents(card) {
     let dragStartIndex;
 
@@ -196,11 +232,14 @@ function setupDragEvents(card) {
 
     card.addEventListener('dragend', function() {
         this.classList.remove('dragging');
+        stopAutoScroll(); // 🔥 加入這行
     });
 
     card.addEventListener('dragover', function(e) {
         e.preventDefault();
         e.dataTransfer.dropEffect = 'move';
+        
+        startAutoScroll(e.clientY); // 🔥 加入這行
         
         const dragging = document.querySelector('.dragging');
         if (dragging && dragging !== this) {
@@ -220,8 +259,94 @@ function setupDragEvents(card) {
         e.preventDefault();
         e.stopPropagation();
         
-        // 🔥 儲存新的排序
+        stopAutoScroll(); // 🔥 加入這行
         saveFavoriteOrder();
+    });
+}
+
+// 🔥 修改現有的 setupTouchDrag 函數
+function setupTouchDrag(card) {
+    let startY, startX;
+    let currentCard = null;
+    let longPressTimer = null;
+
+    card.addEventListener('touchstart', function(e) {
+        if (e.touches.length > 1) return;
+        
+        startY = e.touches[0].clientY;
+        startX = e.touches[0].clientX;
+        currentCard = this;
+        
+        longPressTimer = setTimeout(() => {
+            if (currentCard) {
+                currentCard.classList.add('dragging');
+                if (navigator.vibrate) {
+                    navigator.vibrate(50);
+                }
+            }
+        }, 300);
+    });
+
+    card.addEventListener('touchmove', function(e) {
+        if (longPressTimer && !this.classList.contains('dragging')) {
+            const touch = e.touches[0];
+            const moveX = Math.abs(touch.clientX - startX);
+            const moveY = Math.abs(touch.clientY - startY);
+            
+            if (moveX > 10 || moveY > 10) {
+                clearTimeout(longPressTimer);
+                longPressTimer = null;
+            }
+            return;
+        }
+        
+        if (!this.classList.contains('dragging')) return;
+        
+        e.preventDefault();
+        
+        const touch = e.touches[0];
+        
+        startAutoScroll(touch.clientY); // 🔥 加入這行
+        
+        const elementAtPoint = document.elementFromPoint(touch.clientX, touch.clientY);
+        const targetCard = elementAtPoint?.closest('.card.draggable');
+        
+        if (targetCard && targetCard !== this) {
+            const cards = Array.from(this.parentElement.children);
+            const currentIndex = cards.indexOf(this);
+            const targetIndex = cards.indexOf(targetCard);
+            
+            if (targetIndex > currentIndex) {
+                targetCard.parentElement.insertBefore(this, targetCard.nextSibling);
+            } else {
+                targetCard.parentElement.insertBefore(this, targetCard);
+            }
+        }
+    }, { passive: false });
+
+    card.addEventListener('touchend', function() {
+        if (longPressTimer) {
+            clearTimeout(longPressTimer);
+            longPressTimer = null;
+        }
+        
+        if (this.classList.contains('dragging')) {
+            this.classList.remove('dragging');
+            stopAutoScroll(); // 🔥 加入這行
+            saveFavoriteOrder();
+        }
+        currentCard = null;
+    });
+
+    card.addEventListener('touchcancel', function() {
+        if (longPressTimer) {
+            clearTimeout(longPressTimer);
+            longPressTimer = null;
+        }
+        
+        this.classList.remove('dragging');
+        stopAutoScroll(); // 🔥 加入這行
+        currentCard = null;
     });
 }
 
