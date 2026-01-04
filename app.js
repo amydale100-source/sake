@@ -4,7 +4,7 @@ let cocktails = [];
 // 2. 初始化：從 JSON 載入資料
 window.addEventListener('DOMContentLoaded', async () => {
     try {
-        const res = await fetch('data/cocktails.json');
+        const res = await fetch('cocktails.json');
         if (!res.ok) throw new Error('連線回應不正常');
         
         cocktails = await res.json();
@@ -211,4 +211,5 @@ document.getElementById('showFavBtn').addEventListener('click', function() {
         displayResults(cocktails);
     }
 });
+
 
