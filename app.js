@@ -4,17 +4,38 @@ let cocktails = [];
 // 2. 初始化：從 JSON 載入資料
 window.addEventListener('DOMContentLoaded', async () => {
     try {
-        const res = await fetch('cocktails.json');
-        if (!res.ok) throw new Error('連線回應不正常');
+        const jsonUrl = 'cocktails.json';
+        console.log('🔍 嘗試載入:', jsonUrl);
+        console.log('📍 當前網址:', window.location.href);
         
-        cocktails = await res.json();
+        const res = await fetch(jsonUrl);
+        console.log('📡 HTTP 狀態:', res.status, res.statusText);
+        console.log('📡 完整 URL:', res.url);
+        
+        if (!res.ok) {
+            throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+        }
+        
+        const text = await res.text();
+        console.log('📄 收到的內容長度:', text.length, '字元');
+        console.log('📄 內容開頭:', text.substring(0, 100));
+        
+        cocktails = JSON.parse(text);
         console.log('🍸 酒單資料載入完成，共', cocktails.length, '杯');
 
-        // 初次進入顯示全部
         displayResults(cocktails);
     } catch (err) {
-        console.error('❌ 無法載入酒單資料', err);
-        document.getElementById('results').innerHTML = '<p class="error">資料載入失敗，請確認資料夾路徑或伺服器狀態</p>';
+        console.error('❌ 錯誤:', err);
+        
+        const errorMsg = `
+            <p class="error">
+                資料載入失敗<br><br>
+                錯誤訊息: ${err.message}<br>
+                當前網址: ${window.location.href}<br><br>
+                請按 F12 (或長按重新整理) 查看完整錯誤訊息
+            </p>
+        `;
+        document.getElementById('results').innerHTML = errorMsg;
     }
 });
 
@@ -211,5 +232,6 @@ document.getElementById('showFavBtn').addEventListener('click', function() {
         displayResults(cocktails);
     }
 });
+
 
 
