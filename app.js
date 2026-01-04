@@ -28,7 +28,7 @@ baseSelect.addEventListener('change', () => {
     if (base && base !== 'other') {
         background.style.backgroundImage = `url('images/bg/${base}.jpg')`;
     } else {
-        background.style.backgroundImage = 'none'; // 或預設背景
+        background.style.backgroundImage = `url('images/bg/bg.jpg')`; // 預設背景
     }
 });
 
@@ -210,6 +210,7 @@ document.getElementById('showFavBtn').addEventListener('click', function() {
         displayResults(cocktails);
     }
 });
+
 
 
 
