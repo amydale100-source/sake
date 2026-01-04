@@ -22,13 +22,18 @@ window.addEventListener('DOMContentLoaded', async () => {
 const background = document.querySelector('.background-container');
 const baseSelect = document.getElementById('baseSelect');
 
+// 設定初始預設背景
+background.style.backgroundImage = `url('images/bg/bg.jpg')`;
+
 baseSelect.addEventListener('change', () => {
     const base = baseSelect.value.toLowerCase();
-    // 確保背景圖片路徑正確，如果 base 為 'other' 也可以放一張預設圖
+    
+    // 如果選擇了有效的基酒(不是空值或'other'),就換成對應背景
     if (base && base !== 'other') {
         background.style.backgroundImage = `url('images/bg/${base}.jpg')`;
     } else {
-        background.style.backgroundImage = `url('images/bg/bg.jpg')`; // 預設背景
+        // 如果選擇'other'或清空選擇,恢復預設背景
+        background.style.backgroundImage = `url('images/bg/bg.jpg')`;
     }
 });
 
@@ -210,6 +215,7 @@ document.getElementById('showFavBtn').addEventListener('click', function() {
         displayResults(cocktails);
     }
 });
+
 
 
 
