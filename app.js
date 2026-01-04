@@ -45,13 +45,32 @@ function runSearch({ skipName = false } = {}) {
 
     // A. 基酒篩選
     const mainBases = ["gin", "vodka", "rum", "tequila", "whiskey", "brandy"];
-    if (base) {
-        if (base === "other") {
-            results = results.filter(c => !mainBases.includes(c.base.toLowerCase()));
-        } else {
-            results = results.filter(c => c.base.toLowerCase() === base);
-        }
+   // --- 修改後的基酒過濾邏輯 ---
+if (base) {
+    // 定義六大基酒的中英文關鍵字 (全部轉小寫)
+    const mainBases = [
+        "gin", "琴酒", 
+        "vodka", "伏特加", 
+        "rum", "蘭姆酒", "朗姆酒",
+        "tequila", "龍舌蘭", 
+        "whiskey", "whisky", "威士忌", 
+        "brandy", "白蘭地"
+    ];
+
+    if (base === "other") {
+        // 🔥 其他：如果這杯酒的 base 不包含在上面任何一個關鍵字中，就顯示
+        results = results.filter(c => {
+            const cocktailBase = (c.base || "").toLowerCase().trim();
+            // 檢查這杯酒的基酒，是否「完全沒有」出現在 mainBases 名單中
+            return !mainBases.some(mb => cocktailBase.includes(mb));
+        });
+    } else {
+        // 六大基酒正常比對 (包含模糊比對，避免 JSON 寫 "Gin" 但搜尋 "gin")
+        results = results.filter(c => 
+            c.base.toLowerCase().includes(base)
+        );
     }
+}
 
     // B. 濃度篩選
     if (strength) {
@@ -191,4 +210,5 @@ document.getElementById('showFavBtn').addEventListener('click', function() {
         displayResults(cocktails);
     }
 });
+
 
