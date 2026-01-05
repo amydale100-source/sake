@@ -165,7 +165,7 @@ function displayResults(results) {
                     <p><strong>濃度:</strong> ${c.strength} | <strong>ABV:</strong> ${c.abv}%</p>
                     <p><strong>材料:</strong> ${c.ingredients.join('、')}</p>
                     <button class="favorite-btn ${isFav ? 'active' : ''}" data-name="${c.name_en}">
-                        ${isFav ? '💛 已收藏' : '🤍 收藏這杯'}
+                        ${isFav ? '★ 已收藏' : '☆ 收藏這杯'}
                     </button>
                 </div>
                 <div class="cocktail-image">
@@ -450,6 +450,11 @@ function runSearch({ skipName = false } = {}) {
 }
 
 // --- 7. 收藏功能邏輯 ---
+function resetSearchUI() {
+  document.getElementById('nameInput').value = "";
+  document.getElementById('baseSelect').value = "";
+  document.getElementById('strengthSelect').value = "";
+}
 function toggleFavorite(cocktail, btn) {
     let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
     const showFavBtn = document.getElementById('showFavBtn');
@@ -458,42 +463,57 @@ function toggleFavorite(cocktail, btn) {
     if (favorites.includes(cocktail.name_en)) {
         favorites = favorites.filter(name => name !== cocktail.name_en);
         btn.classList.remove('active');
-        btn.textContent = '🤍 收藏這杯';
+        btn.textContent = '☆ 收藏這杯';
     } else {
         favorites.push(cocktail.name_en);
         btn.classList.add('active');
-        btn.textContent = '💛 已收藏';
+        btn.textContent = '★ 已收藏';
     }
 
     localStorage.setItem('favorites', JSON.stringify(favorites));
 
     // 只有在收藏模式下才重新執行搜尋
     if (inFavoriteMode) {
-        if (favorites.length === 0) {
-            // 如果收藏清空了,自動切換回全部顯示
-            showFavBtn.classList.remove('active');
-            showFavBtn.textContent = "💛 我的收藏";
-            runSearch(); // 🔥 改用 runSearch,保持搜尋條件
-        } else {
-            // 🔥 重新執行搜尋(會自動只在收藏中搜尋)
-            runSearch();
-        }
+    if (favorites.length === 0) {
+        // 如果收藏清空了,自動切換回全部顯示
+        showFavBtn.classList.remove('active');
+        showFavBtn.textContent = "★ 我的酒單";
+        
+        // 🔥 加入這行:移除搜尋欄的收藏模式樣式
+        document.getElementById('search').classList.remove('favorite-mode');
+        
+        runSearch(); // 改用 runSearch,保持搜尋條件
+    } else {
+        // 重新執行搜尋(會自動只在收藏中搜尋)
+        runSearch();
     }
+}
 }
 
 // --- 8. 「我的收藏」切換按鈕 ---
-document.getElementById('showFavBtn').addEventListener('click', function() {
-    const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
-    
-    this.classList.toggle('active');
 
-    if (this.classList.contains('active')) {
-        this.textContent = "📜 顯示全部";
-    } else {
-        this.textContent = "💛 我的收藏";
-    }
-    
-    // 🔥 統一使用 runSearch 來顯示結果
-    runSearch();
+
+document.getElementById('showFavBtn').addEventListener('click', function () {
+  const searchSection = document.getElementById('search');
+
+  // 切換收藏模式
+  this.classList.toggle('active');
+
+  // 重置搜尋欄
+  resetSearchUI();
+
+  if (this.classList.contains('active')) {
+    // ✅ 進入收藏模式
+    this.textContent = "🍸 全部酒單";
+    searchSection.classList.add('favorite-mode');
+  } else {
+    // ✅ 離開收藏模式
+    this.textContent = "★ 我的酒單";
+    searchSection.classList.remove('favorite-mode');
+  }
+
+  runSearch();
 });
+
+
 
