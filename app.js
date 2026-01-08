@@ -480,6 +480,7 @@ function stopAutoScroll() {
 // ==================== 搜尋欄滾動縮小功能 ====================
 (function () {
     let lastScrollTop = 0;
+    let isManuallyExpanded = false; // 🔥 新增:手動展開標記
 
     const searchSection = document.getElementById('search');
     const nameInput = document.getElementById('nameInput');
@@ -547,6 +548,9 @@ function stopAutoScroll() {
     const DEBOUNCE_MS = 16;        // 防抖延遲
 
     function handleScroll() {
+        // 🔥 如果手動展開中,不執行縮小
+        if (isManuallyExpanded) return;
+
         // 桌機版考慮 focus 狀態
         if (window.innerWidth > 768 && searchInputs.includes(document.activeElement)) {
             return;
@@ -578,17 +582,19 @@ function stopAutoScroll() {
     // -------------------- Focus/Blur 處理 --------------------
     searchInputs.forEach(el => {
         el.addEventListener('focus', () => {
-            if (window.innerWidth > 768) {
-                searchSection.classList.remove('minimized');
-            }
+            // 🔥 聚焦時設為手動展開
+            isManuallyExpanded = true;
+            searchSection.classList.remove('minimized');
             updateFieldVisibility();
         });
 
         el.addEventListener('blur', () => {
             setTimeout(() => {
-                if (window.innerWidth > 768) {
-                    const anyFocus = searchInputs.some(i => i === document.activeElement);
-                    if (!anyFocus) {
+                const anyFocus = searchInputs.some(i => i === document.activeElement);
+                if (!anyFocus) {
+                    // 🔥 所有欄位都失焦後,解除鎖定
+                    isManuallyExpanded = false;
+                    if (window.innerWidth > 768) {
                         searchSection.classList.remove('expanded');
                     }
                 }
@@ -601,8 +607,24 @@ function stopAutoScroll() {
         if (window.innerWidth > 768) return;
 
         if (e.target.classList.contains('minimized-label') || e.target === searchSection) {
+            // 🔥 點擊展開,設為手動展開狀態
+            isManuallyExpanded = true;
             searchSection.classList.remove('minimized');
             updateFieldVisibility();
+            
+            // 🔥 自動聚焦到名稱輸入框
+            setTimeout(() => {
+                nameInput.focus();
+            }, 100);
+        }
+    });
+
+    // 🔥 新增:點擊搜尋區域外部,解除鎖定
+    document.addEventListener('click', (e) => {
+        if (window.innerWidth > 768) return;
+        
+        if (!searchSection.contains(e.target)) {
+            isManuallyExpanded = false;
         }
     });
 
@@ -640,4 +662,5 @@ function stopAutoScroll() {
             behavior: 'smooth'
         });
     });
+
 })();
