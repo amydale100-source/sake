@@ -1,10 +1,13 @@
-// 1. 全域變數
+/* ==================================================================================
+   SAKE - AI 侍酒師 JavaScript
+   ================================================================================== */
+
+// ==================== 全域變數 ====================
 let cocktails = []; 
-// 🔥 在這裡加入自動滾動的全域變數
 let autoScrollInterval = null;
 let scrollSpeed = 0;
 
-// 2. 初始化：從 JSON 載入資料
+// ==================== 初始化:載入酒單資料 ====================
 window.addEventListener('DOMContentLoaded', async () => {
     try {
         const res = await fetch('cocktails.json');
@@ -17,11 +20,12 @@ window.addEventListener('DOMContentLoaded', async () => {
         displayResults(cocktails);
     } catch (err) {
         console.error('❌ 無法載入酒單資料', err);
-        document.getElementById('results').innerHTML = '<p class="error">資料載入失敗，請確認資料夾路徑或伺服器狀態</p>';
+        document.getElementById('results').innerHTML = 
+            '<p class="error">資料載入失敗，請確認網路連線或重新整理頁面</p>';
     }
 });
 
-// --- 3. 背景動態切換 ---
+// ==================== 背景動態切換 ====================
 const background = document.querySelector('.background-container');
 const baseSelect = document.getElementById('baseSelect');
 
@@ -36,47 +40,49 @@ baseSelect.addEventListener('change', () => {
     }
 });
 
-// --- 4. 搜尋 & 篩選邏輯 ---
+// ==================== 搜尋與篩選邏輯 ====================
+
+/**
+ * 執行搜尋與篩選
+ * @param {Object} options - 選項
+ * @param {boolean} options.skipName - 是否跳過名稱搜尋
+ */
 function runSearch({ skipName = false } = {}) {
     // 防止資料未載入時執行搜尋
     if (cocktails.length === 0) return;
 
-    const base = document.getElementById('baseSelect').value.toLowerCase();
+    // 取得搜尋條件
+    const base = baseSelect.value.toLowerCase();
     const strength = document.getElementById('strengthSelect').value.toLowerCase();
     const nameInput = skipName ? "" : document.getElementById('nameInput').value.trim().toLowerCase();
     
-    // 🔥 新增:判斷目前是否在收藏模式
+    // 判斷是否在收藏模式
     const showFavBtn = document.getElementById('showFavBtn');
     const inFavoriteMode = showFavBtn.classList.contains('active');
     
-    // 🔥 新增:根據模式決定搜尋範圍
-    let searchPool = cocktails; // 預設搜尋全部
-    
-    if (inFavoriteMode) {
-        // 在收藏模式下,只搜尋收藏的酒款
-        const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
-        searchPool = cocktails.filter(c => favorites.includes(c.name_en));
-    }
-
-    let results = [...searchPool]; // 從選定的範圍開始過濾
+    // 根據模式決定搜尋範圍
+    let searchPool = inFavoriteMode ? getSortedFavorites() : cocktails;
+    let results = [...searchPool];
 
     // A. 基酒篩選
-    const mainBases = [
-        "gin", "琴酒", 
-        "vodka", "伏特加", 
-        "rum", "蘭姆酒", "朗姆酒",
-        "tequila", "龍舌蘭", 
-        "whiskey", "whisky", "威士忌", 
-        "brandy", "白蘭地"
-    ];
-
     if (base) {
+        const mainBases = [
+            "gin", "琴酒", 
+            "vodka", "伏特加", 
+            "rum", "蘭姆酒", "朗姆酒",
+            "tequila", "龍舌蘭", 
+            "whiskey", "whisky", "威士忌", 
+            "brandy", "白蘭地"
+        ];
+
         if (base === "other") {
+            // 篩選非六大基酒
             results = results.filter(c => {
                 const cocktailBase = (c.base || "").toLowerCase().trim();
                 return !mainBases.some(mb => cocktailBase.includes(mb));
             });
         } else {
+            // 篩選特定基酒
             results = results.filter(c => 
                 c.base.toLowerCase().includes(base)
             );
@@ -88,7 +94,7 @@ function runSearch({ skipName = false } = {}) {
         results = results.filter(c => c.strength.toLowerCase() === strength);
     }
 
-    // C. 名稱搜尋 (模糊搜尋 vs 精準比對)
+    // C. 名稱搜尋
     if (!nameInput) {
         displayResults(results);
         return;
@@ -103,7 +109,7 @@ function runSearch({ skipName = false } = {}) {
 
         const fuseResults = fuse.search(nameInput).map(r => r.item);
         
-        // 額外處理:首字母(Initials) 比對
+        // 首字母比對
         const initialsInput = nameInput.replace(/\s+/g, "");
         const initialMatch = results.filter(c => 
             (c.initials || "").toLowerCase().includes(initialsInput)
@@ -122,38 +128,67 @@ function runSearch({ skipName = false } = {}) {
     }
 }
 
-// --- 5. 事件監聽設定 ---
+/**
+ * 重置搜尋介面
+ */
+function resetSearchUI() {
+    document.getElementById('nameInput').value = "";
+    baseSelect.value = "";
+    document.getElementById('strengthSelect').value = "";
+}
+
+// -------------------- 事件監聽設定 --------------------
 document.getElementById('searchBtn').addEventListener('click', () => runSearch());
-document.getElementById('baseSelect').addEventListener('change', () => runSearch({ skipName: true }));
+baseSelect.addEventListener('change', () => runSearch({ skipName: true }));
 document.getElementById('strengthSelect').addEventListener('change', () => runSearch({ skipName: true }));
 
+// ==================== 渲染結果 ====================
 
-// --- 6. 渲染結果到畫面上 ---
+/**
+ * 將搜尋結果渲染到畫面
+ * @param {Array} results - 酒款陣列
+ */
 function displayResults(results) {
     const container = document.getElementById('results');
     container.innerHTML = '';
-
-    if (results.length === 0) {
-        container.innerHTML = '<p class="no-result">找不到符合的酒款,試試看其他關鍵字?</p>';
-        return;
-    }
-
-    // 🔥 檢查是否在收藏模式
+    
+    // 檢查是否在收藏模式
     const showFavBtn = document.getElementById('showFavBtn');
     const inFavoriteMode = showFavBtn.classList.contains('active');
 
-    results.forEach((c, index) => {
+    // 無結果時顯示提示訊息
+    if (results.length === 0) {
+        if (inFavoriteMode) {
+            container.innerHTML = `
+                <div class="no-result favorite-empty">
+                    <p>📭 你的收藏是空的</p>
+                    <p class="hint">試著點擊酒款卡片上的「☆ 收藏這杯」按鈕來收藏你喜歡的調酒吧!</p>
+                </div>
+            `;
+        } else {
+            container.innerHTML = `
+                <div class="no-result">
+                    <p>🔍 找不到符合的酒款</p>
+                    <p class="hint">試試看其他關鍵字或調整篩選條件?</p>
+                </div>
+            `;
+        }
+        return;
+    }
+
+    // 渲染每個酒款卡片
+    results.forEach((c) => {
         const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
         const isFav = favorites.includes(c.name_en);
 
         const card = document.createElement('div');
         card.className = 'card';
         
-        // 🔥 在收藏模式下啟用拖曳功能
+        // 收藏模式下啟用拖曳
         if (inFavoriteMode) {
             card.draggable = true;
             card.classList.add('draggable');
-            card.dataset.name = c.name_en; // 儲存酒款名稱用於識別
+            card.dataset.name = c.name_en;
         }
         
         card.innerHTML = `
@@ -168,63 +203,113 @@ function displayResults(results) {
                         ${isFav ? '★ 已收藏' : '☆ 收藏這杯'}
                     </button>
                 </div>
-                <div class="cocktail-image">
-                </div>
+                <div class="cocktail-image"></div>
             </div>
         `;
 
-        // 收藏按鈕點擊事件
+        // 綁定收藏按鈕事件
         const btn = card.querySelector('.favorite-btn');
         btn.addEventListener('click', () => toggleFavorite(c, btn));
 
-        // 🔥 加入拖曳事件監聽
+        // 綁定拖曳事件
         if (inFavoriteMode) {
             setupDragEvents(card);
+            setupTouchDrag(card);
         }
 
         container.appendChild(card);
     });
 }
 
-// 🔥 在這裡加入自動滾動函數（在 displayResults 之後）
-function startAutoScroll(clientY) {
-    const viewportHeight = window.innerHeight;
-    const scrollZone = 100;
-    const maxSpeed = 15;
-    
-    if (clientY < scrollZone) {
-        const ratio = (scrollZone - clientY) / scrollZone;
-        scrollSpeed = -ratio * maxSpeed;
-    } else if (clientY > viewportHeight - scrollZone) {
-        const ratio = (clientY - (viewportHeight - scrollZone)) / scrollZone;
-        scrollSpeed = ratio * maxSpeed;
+// ==================== 收藏功能 ====================
+
+/**
+ * 切換收藏狀態
+ * @param {Object} cocktail - 酒款物件
+ * @param {HTMLElement} btn - 按鈕元素
+ */
+function toggleFavorite(cocktail, btn) {
+    let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+    const showFavBtn = document.getElementById('showFavBtn');
+    const inFavoriteMode = showFavBtn.classList.contains('active');
+
+    // 切換收藏狀態
+    if (favorites.includes(cocktail.name_en)) {
+        favorites = favorites.filter(name => name !== cocktail.name_en);
+        btn.classList.remove('active');
+        btn.textContent = '☆ 收藏這杯';
     } else {
-        scrollSpeed = 0;
-        stopAutoScroll();
-        return;
+        favorites.push(cocktail.name_en);
+        btn.classList.add('active');
+        btn.textContent = '★ 已收藏';
     }
+
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+
+    // 收藏模式下重新渲染
+    if (inFavoriteMode) {
+        if (favorites.length === 0) {
+            // 收藏清空,切回全部模式
+            showFavBtn.classList.remove('active');
+            showFavBtn.textContent = "★ 我的酒單";
+            document.getElementById('search').classList.remove('favorite-mode');
+        }
+        runSearch();
+    }
+}
+
+/**
+ * 取得排序後的收藏清單
+ * @returns {Array} 排序後的酒款陣列
+ */
+function getSortedFavorites() {
+    const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
     
-    if (!autoScrollInterval && scrollSpeed !== 0) {
-        autoScrollInterval = setInterval(() => {
-            window.scrollBy(0, scrollSpeed);
-        }, 16);
-    }
+    return favorites
+        .map(name => cocktails.find(c => c.name_en === name))
+        .filter(c => c !== undefined);
 }
 
-function stopAutoScroll() {
-    if (autoScrollInterval) {
-        clearInterval(autoScrollInterval);
-        autoScrollInterval = null;
-    }
-    scrollSpeed = 0;
+/**
+ * 儲存收藏的排序
+ */
+function saveFavoriteOrder() {
+    const container = document.getElementById('results');
+    const cards = container.querySelectorAll('.card.draggable');
+    const newOrder = Array.from(cards).map(card => card.dataset.name);
+    
+    localStorage.setItem('favorites', JSON.stringify(newOrder));
+    console.log('✅ 收藏順序已更新:', newOrder);
 }
 
-// 🔥 修改現有的 setupDragEvents 函數
+// -------------------- 收藏按鈕事件 --------------------
+document.getElementById('showFavBtn').addEventListener('click', function () {
+    const searchSection = document.getElementById('search');
+
+    this.classList.toggle('active');
+    resetSearchUI();
+
+    if (this.classList.contains('active')) {
+        // 進入收藏模式
+        this.textContent = "🍸 全部酒單";
+        searchSection.classList.add('favorite-mode');
+    } else {
+        // 離開收藏模式
+        this.textContent = "★ 我的酒單";
+        searchSection.classList.remove('favorite-mode');
+    }
+
+    runSearch();
+});
+
+// ==================== 拖曳排序功能 ====================
+
+/**
+ * 設定桌機版拖曳事件
+ * @param {HTMLElement} card - 卡片元素
+ */
 function setupDragEvents(card) {
-    let dragStartIndex;
-
     card.addEventListener('dragstart', function(e) {
-        dragStartIndex = Array.from(this.parentElement.children).indexOf(this);
         this.classList.add('dragging');
         e.dataTransfer.effectAllowed = 'move';
         e.dataTransfer.setData('text/html', this.innerHTML);
@@ -232,14 +317,14 @@ function setupDragEvents(card) {
 
     card.addEventListener('dragend', function() {
         this.classList.remove('dragging');
-        stopAutoScroll(); // 🔥 加入這行
+        stopAutoScroll();
     });
 
     card.addEventListener('dragover', function(e) {
         e.preventDefault();
         e.dataTransfer.dropEffect = 'move';
         
-        startAutoScroll(e.clientY); // 🔥 加入這行
+        startAutoScroll(e.clientY);
         
         const dragging = document.querySelector('.dragging');
         if (dragging && dragging !== this) {
@@ -258,13 +343,15 @@ function setupDragEvents(card) {
     card.addEventListener('drop', function(e) {
         e.preventDefault();
         e.stopPropagation();
-        
-        stopAutoScroll(); // 🔥 加入這行
+        stopAutoScroll();
         saveFavoriteOrder();
     });
 }
 
-// 🔥 修改現有的 setupTouchDrag 函數
+/**
+ * 設定手機版觸控拖曳事件
+ * @param {HTMLElement} card - 卡片元素
+ */
 function setupTouchDrag(card) {
     let startY, startX;
     let currentCard = null;
@@ -305,8 +392,7 @@ function setupTouchDrag(card) {
         e.preventDefault();
         
         const touch = e.touches[0];
-        
-        startAutoScroll(touch.clientY); // 🔥 加入這行
+        startAutoScroll(touch.clientY);
         
         const elementAtPoint = document.elementFromPoint(touch.clientX, touch.clientY);
         const targetCard = elementAtPoint?.closest('.card.draggable');
@@ -332,7 +418,7 @@ function setupTouchDrag(card) {
         
         if (this.classList.contains('dragging')) {
             this.classList.remove('dragging');
-            stopAutoScroll(); // 🔥 加入這行
+            stopAutoScroll();
             saveFavoriteOrder();
         }
         currentCard = null;
@@ -345,175 +431,213 @@ function setupTouchDrag(card) {
         }
         
         this.classList.remove('dragging');
-        stopAutoScroll(); // 🔥 加入這行
+        stopAutoScroll();
         currentCard = null;
     });
 }
 
-// 🔥 新增:儲存收藏的排序
-function saveFavoriteOrder() {
-    const container = document.getElementById('results');
-    const cards = container.querySelectorAll('.card.draggable');
-    const newOrder = Array.from(cards).map(card => card.dataset.name);
-    
-    localStorage.setItem('favorites', JSON.stringify(newOrder));
-    console.log('✅ 收藏順序已更新:', newOrder);
-}
+// -------------------- 拖曳自動滾動 --------------------
 
-// 🔥 修改:按照儲存的順序顯示收藏
-function getSortedFavorites() {
-    const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+/**
+ * 開始自動滾動
+ * @param {number} clientY - 滑鼠/觸控 Y 座標
+ */
+function startAutoScroll(clientY) {
+    const viewportHeight = window.innerHeight;
+    const scrollZone = 100;
+    const maxSpeed = 15;
     
-    // 根據收藏順序排序酒款
-    const sortedCocktails = favorites
-        .map(name => cocktails.find(c => c.name_en === name))
-        .filter(c => c !== undefined); // 過濾掉找不到的酒款
-    
-    return sortedCocktails;
-}
-
-// --- 修改 runSearch 函數中的收藏模式部分 ---
-function runSearch({ skipName = false } = {}) {
-    if (cocktails.length === 0) return;
-
-    const base = document.getElementById('baseSelect').value.toLowerCase();
-    const strength = document.getElementById('strengthSelect').value.toLowerCase();
-    const nameInput = skipName ? "" : document.getElementById('nameInput').value.trim().toLowerCase();
-    
-    const showFavBtn = document.getElementById('showFavBtn');
-    const inFavoriteMode = showFavBtn.classList.contains('active');
-    
-    let searchPool = cocktails;
-    
-    if (inFavoriteMode) {
-        // 🔥 使用排序後的收藏清單
-        searchPool = getSortedFavorites();
+    if (clientY < scrollZone) {
+        const ratio = (scrollZone - clientY) / scrollZone;
+        scrollSpeed = -ratio * maxSpeed;
+    } else if (clientY > viewportHeight - scrollZone) {
+        const ratio = (clientY - (viewportHeight - scrollZone)) / scrollZone;
+        scrollSpeed = ratio * maxSpeed;
+    } else {
+        scrollSpeed = 0;
+        stopAutoScroll();
+        return;
     }
+    
+    if (!autoScrollInterval && scrollSpeed !== 0) {
+        autoScrollInterval = setInterval(() => {
+            window.scrollBy(0, scrollSpeed);
+        }, 16);
+    }
+}
 
-    let results = [...searchPool];
+/**
+ * 停止自動滾動
+ */
+function stopAutoScroll() {
+    if (autoScrollInterval) {
+        clearInterval(autoScrollInterval);
+        autoScrollInterval = null;
+    }
+    scrollSpeed = 0;
+}
 
-    // A. 基酒篩選
-    const mainBases = [
-        "gin", "琴酒", 
-        "vodka", "伏特加", 
-        "rum", "蘭姆酒", "朗姆酒",
-        "tequila", "龍舌蘭", 
-        "whiskey", "whisky", "威士忌", 
-        "brandy", "白蘭地"
-    ];
+// ==================== 搜尋欄滾動縮小功能 ====================
+(function () {
+    let lastScrollTop = 0;
 
-    if (base) {
-        if (base === "other") {
-            results = results.filter(c => {
-                const cocktailBase = (c.base || "").toLowerCase().trim();
-                return !mainBases.some(mb => cocktailBase.includes(mb));
-            });
+    const searchSection = document.getElementById('search');
+    const nameInput = document.getElementById('nameInput');
+    const strengthSelect = document.getElementById('strengthSelect');
+    const searchInputs = [nameInput, baseSelect, strengthSelect];
+
+    // -------------------- 更新縮小標籤顯示 --------------------
+    function updateMinimizedDisplay() {
+        if (window.innerWidth > 768) return;
+
+        let label = searchSection.querySelector('.minimized-label');
+        if (!label) {
+            label = document.createElement('div');
+            label.className = 'minimized-label';
+            searchSection.insertBefore(label, searchSection.firstChild);
+        }
+
+        // 優先顯示有值的欄位
+        if (nameInput.value.trim()) {
+            label.textContent = nameInput.value.trim();
+        } else if (baseSelect.value) {
+            label.textContent = baseSelect.options[baseSelect.selectedIndex].text;
+        } else if (strengthSelect.value) {
+            label.textContent = strengthSelect.options[strengthSelect.selectedIndex].text;
         } else {
-            results = results.filter(c => 
-                c.base.toLowerCase().includes(base)
-            );
+            label.textContent = '搜尋';
         }
     }
 
-    // B. 濃度篩選
-    if (strength) {
-        results = results.filter(c => c.strength.toLowerCase() === strength);
+    // -------------------- 控制欄位顯示/隱藏 --------------------
+    function updateFieldVisibility() {
+        if (window.innerWidth > 768) return;
+
+        const fields = [
+            { el: nameInput, hasValue: nameInput.value.trim() !== '' },
+            { el: baseSelect, hasValue: baseSelect.value !== '' },
+            { el: strengthSelect, hasValue: strengthSelect.value !== '' }
+        ];
+
+        const hasAnyValue = fields.some(f => f.hasValue);
+
+        fields.forEach(f => {
+            if (searchSection.classList.contains('minimized')) {
+                // 縮小時:有任何值就只顯示有值的,全空就全隱藏
+                f.el.classList.toggle('empty-hidden', hasAnyValue ? !f.hasValue : true);
+            } else {
+                // 展開時:全部顯示
+                f.el.classList.remove('empty-hidden');
+            }
+        });
     }
 
-    // C. 名稱搜尋
-    if (!nameInput) {
-        displayResults(results);
-        return;
+    // -------------------- 防抖函數 --------------------
+    function debounce(fn, wait) {
+        let timer;
+        return function () {
+            clearTimeout(timer);
+            timer = setTimeout(fn, wait);
+        };
     }
 
-    if (window.Fuse) {
-        const fuse = new Fuse(results, {
-            keys: ["name_en", "name_zh", "initials"],
-            threshold: 0.35,
+    // -------------------- 滾動處理 --------------------
+    const SCROLL_TRIGGER_Y = 40;  // 觸發門檻
+    const SCROLL_DIFF = 3;         // 滾動差距門檻
+    const DEBOUNCE_MS = 16;        // 防抖延遲
+
+    function handleScroll() {
+        // 桌機版考慮 focus 狀態
+        if (window.innerWidth > 768 && searchInputs.includes(document.activeElement)) {
+            return;
+        }
+
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const diff = scrollTop - lastScrollTop;
+
+        if (scrollTop > SCROLL_TRIGGER_Y && diff > SCROLL_DIFF) {
+            // 向下滾動 → 縮小
+            searchSection.classList.add('minimized');
+            updateMinimizedDisplay();
+            updateFieldVisibility();
+        } else if (diff < -SCROLL_DIFF) {
+            // 向上滾動 → 展開
+            searchSection.classList.remove('minimized');
+            updateFieldVisibility();
+        }
+
+        lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+    }
+
+    window.addEventListener(
+        'scroll',
+        debounce(handleScroll, DEBOUNCE_MS),
+        { passive: true }
+    );
+
+    // -------------------- Focus/Blur 處理 --------------------
+    searchInputs.forEach(el => {
+        el.addEventListener('focus', () => {
+            if (window.innerWidth > 768) {
+                searchSection.classList.remove('minimized');
+            }
+            updateFieldVisibility();
         });
 
-        const fuseResults = fuse.search(nameInput).map(r => r.item);
-        const initialsInput = nameInput.replace(/\s+/g, "");
-        const initialMatch = results.filter(c => 
-            (c.initials || "").toLowerCase().includes(initialsInput)
-        );
+        el.addEventListener('blur', () => {
+            setTimeout(() => {
+                if (window.innerWidth > 768) {
+                    const anyFocus = searchInputs.some(i => i === document.activeElement);
+                    if (!anyFocus) {
+                        searchSection.classList.remove('expanded');
+                    }
+                }
+            }, 150);
+        });
+    });
 
-        const combined = [...new Set([...fuseResults, ...initialMatch])];
-        displayResults(combined);
-    } else {
-        const exact = results.filter(c =>
-            c.name_en.toLowerCase().includes(nameInput) ||
-            c.name_zh.includes(nameInput)
-        );
-        displayResults(exact);
-    }
-}
+    // -------------------- 點擊展開 --------------------
+    searchSection.addEventListener('click', e => {
+        if (window.innerWidth > 768) return;
 
-// --- 7. 收藏功能邏輯 ---
-function resetSearchUI() {
-  document.getElementById('nameInput').value = "";
-  document.getElementById('baseSelect').value = "";
-  document.getElementById('strengthSelect').value = "";
-}
-function toggleFavorite(cocktail, btn) {
-    let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
-    const showFavBtn = document.getElementById('showFavBtn');
-    const inFavoriteMode = showFavBtn.classList.contains('active');
+        if (e.target.classList.contains('minimized-label') || e.target === searchSection) {
+            searchSection.classList.remove('minimized');
+            updateFieldVisibility();
+        }
+    });
 
-    if (favorites.includes(cocktail.name_en)) {
-        favorites = favorites.filter(name => name !== cocktail.name_en);
-        btn.classList.remove('active');
-        btn.textContent = '☆ 收藏這杯';
-    } else {
-        favorites.push(cocktail.name_en);
-        btn.classList.add('active');
-        btn.textContent = '★ 已收藏';
-    }
+    // -------------------- 輸入變化更新 --------------------
+    searchInputs.forEach(el => {
+        el.addEventListener('input', () => {
+            updateMinimizedDisplay();
+            updateFieldVisibility();
+        });
+        el.addEventListener('change', () => {
+            updateMinimizedDisplay();
+            updateFieldVisibility();
+        });
+    });
+})();
 
-    localStorage.setItem('favorites', JSON.stringify(favorites));
+// ==================== 回到頂端按鈕 ====================
+(function() {
+    const btn = document.getElementById('scrollToTopBtn');
+    if (!btn) return;
 
-    // 只有在收藏模式下才重新執行搜尋
-    if (inFavoriteMode) {
-    if (favorites.length === 0) {
-        // 如果收藏清空了,自動切換回全部顯示
-        showFavBtn.classList.remove('active');
-        showFavBtn.textContent = "★ 我的酒單";
-        
-        // 🔥 加入這行:移除搜尋欄的收藏模式樣式
-        document.getElementById('search').classList.remove('favorite-mode');
-        
-        runSearch(); // 改用 runSearch,保持搜尋條件
-    } else {
-        // 重新執行搜尋(會自動只在收藏中搜尋)
-        runSearch();
-    }
-}
-}
+    // 監聽滾動,超過 100px 顯示按鈕
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 100) {
+            btn.classList.add('show');
+        } else {
+            btn.classList.remove('show');
+        }
+    });
 
-// --- 8. 「我的收藏」切換按鈕 ---
-
-
-document.getElementById('showFavBtn').addEventListener('click', function () {
-  const searchSection = document.getElementById('search');
-
-  // 切換收藏模式
-  this.classList.toggle('active');
-
-  // 重置搜尋欄
-  resetSearchUI();
-
-  if (this.classList.contains('active')) {
-    // ✅ 進入收藏模式
-    this.textContent = "🍸 全部酒單";
-    searchSection.classList.add('favorite-mode');
-  } else {
-    // ✅ 離開收藏模式
-    this.textContent = "★ 我的酒單";
-    searchSection.classList.remove('favorite-mode');
-  }
-
-  runSearch();
-});
-
-
-
+    // 點擊平滑滾動到頂端
+    btn.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+})();

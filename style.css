@@ -1,35 +1,40 @@
+/* ==================================================================================
+   SAKE - AI 侍酒師樣式表
+   ================================================================================== */
+
+/* ==================== 全域設定 ==================== */
 body {
   margin: 0;
   font-family: "Helvetica Neue", "Noto Sans TC", sans-serif;
   color: #2E1F14;
-   /* 背景圖替換成設計師提供的酒瓶圖 */
-  background-size: cover;        /* 讓圖填滿整個螢幕 */
-  background-position: center;    /* 置中對齊 */
+  background-size: cover;
+  background-position: center;
   background-repeat: no-repeat;
-  background-attachment: fixed;   /* 滾動時背景固定 */
-  transition: background 0.5s ease; /* 動態切換平滑 */
-  /* 如果背景太亮或想加顏色覆蓋，可用半透明覆蓋層 */
-  /* background-color: rgba(245,241,234,0.5); */
+  background-attachment: fixed;
+  transition: background 0.5s ease;
 }
 
+/* ==================== 背景容器 ==================== */
 .background-container {
-  background-image: url('images/bg/bg.jpg');
-  position: fixed;   /* 固定在螢幕後面 */
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
+  background-image: url('images/bg/bg.jpg');
   background-size: cover;
   background-position: center;
-  z-index: 0;        /* 放在最底層 */
-  transition: background-image 0.3s ease; /* 可選:增加切換動畫 */
+  z-index: 0;
+  transition: background-image 0.3s ease;
 }
 
+/* 確保所有內容在背景之上 */
 body > *:not(.background-container) {
   position: relative;
-  z-index: 1;        /* 文字卡、header、搜尋欄等都在上層 */
+  z-index: 1;
 }
 
+/* ==================== 頁首區域 ==================== */
 .app-header {
   text-align: center;
   padding: 20px;
@@ -37,7 +42,6 @@ body > *:not(.background-container) {
   color: white;
   border-bottom: 4px solid #C7A14A;
 }
-
 
 .logo-box {
   display: flex;
@@ -50,36 +54,35 @@ body > *:not(.background-container) {
   height: 80px;
   border-radius: 50%;
   object-fit: cover;
-
-  background: rgba(255,255,255,0.15); /* 微底色 */
-  padding: 6px;                       /* 呼吸感 */
-  box-shadow: 0 0 12px rgba(255,255,255,0.35); /* 微發光 */
+  background: rgba(255, 255, 255, 0.15);
+  padding: 6px;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.35);
 }
-
-
 
 .subtitle {
   font-size: 14px;
   opacity: 0.8;
 }
 
-/* 上方 safe area，避免搜尋欄遮到酒瓶上半部 */
+/* ==================== 搜尋區域 ==================== */
 #search {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   padding: 15px;
-
-  /* 固定 sticky 在 safe area 上方 */
   position: sticky;
-  top: 5vh;       /* 往下 5% 高度，避免頂部擋瓶口 */
+  top: 5vh;
   z-index: 10;
-
-  background: rgba(255,255,255,0.95); /* 微透明，保持背景透視酒瓶 */
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
   border-radius: 12px;
-  margin: 0 12px; /* 左右留空，瓶子置中 */
+  margin: 0 12px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  will-change: height, padding;
 }
 
+/* 搜尋欄輸入框 */
 #search input,
 #search select {
   flex: 1;
@@ -89,6 +92,7 @@ body > *:not(.background-container) {
   font-size: 16px;
 }
 
+/* 搜尋欄按鈕 - 基本樣式 */
 #search button {
   background: #C7A14A;
   color: #2E1F14;
@@ -97,8 +101,25 @@ body > *:not(.background-container) {
   border-radius: 8px;
   font-weight: bold;
   cursor: pointer;
+  transition: opacity 0.2s ease;
 }
-/* 🌙 收藏模式搜尋欄 */
+
+#search button:hover {
+  opacity: 0.9;
+}
+
+/* 我的酒單按鈕 */
+#showFavBtn {
+  background: #2E1F14;
+  color: #C7A14A;
+}
+
+#showFavBtn.active {
+  background: #C7A14A;
+  color: #2E1F14;
+}
+
+/* -------------------- 收藏模式樣式 -------------------- */
 #search.favorite-mode {
   background: linear-gradient(
     135deg,
@@ -107,6 +128,7 @@ body > *:not(.background-container) {
   );
   border: 1px solid rgba(199, 161, 74, 0.6);
   box-shadow: 0 0 18px rgba(199, 161, 74, 0.25);
+  animation: favGlow 3s ease-in-out infinite alternate;
 }
 
 #search.favorite-mode input,
@@ -116,32 +138,27 @@ body > *:not(.background-container) {
   border: 1px solid rgba(199, 161, 74, 0.6);
 }
 
-/* 🔥 新增:下拉選單的選項樣式 */
+#search.favorite-mode input::placeholder {
+  color: rgba(245, 235, 215, 0.6);
+}
+
+/* 收藏模式下拉選單選項 */
 #search.favorite-mode select option {
-  background: rgba(30, 42, 74, 0.98); /* 深色背景 */
-  color: #F5EBD7; /* 淺色文字 */
+  background: rgba(30, 42, 74, 0.98);
+  color: #F5EBD7;
   padding: 8px;
 }
 
-/* 🔥 可選:滑鼠懸停時的選項樣式 */
 #search.favorite-mode select option:hover {
   background: rgba(199, 161, 74, 0.3);
 }
 
-/* 🔥 可選:被選中的選項樣式 */
 #search.favorite-mode select option:checked {
   background: rgba(199, 161, 74, 0.4);
   font-weight: bold;
 }
 
-#search.favorite-mode input::placeholder {
-  color: rgba(245, 235, 215, 0.6); /* 🔥 修正:原本寫錯了 */
-}
-
-#search.favorite-mode {
-  animation: favGlow 3s ease-in-out infinite alternate;
-}
-
+/* 收藏模式發光動畫 */
 @keyframes favGlow {
   from {
     box-shadow: 0 0 12px rgba(199, 161, 74, 0.2);
@@ -151,16 +168,51 @@ body > *:not(.background-container) {
   }
 }
 
+/* -------------------- 縮小狀態標籤 -------------------- */
+.minimized-label {
+  display: none;
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 123, 255, 0.1);
+  color: #007bff;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: calc(100% - 160px);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
 
+.minimized-label:hover {
+  background: rgba(0, 123, 255, 0.2);
+}
+
+/* 收藏模式的標籤樣式 */
+#search.favorite-mode .minimized-label {
+  background: rgba(199, 161, 74, 0.2);
+  color: #C7A14A;
+  border: 1px solid rgba(199, 161, 74, 0.4);
+}
+
+#search.favorite-mode .minimized-label:hover {
+  background: rgba(199, 161, 74, 0.3);
+}
+
+/* ==================== 結果顯示區域 ==================== */
 #results {
   padding: 16px;
   display: grid;
   gap: 15px;
-  /* 往下開始顯示，避開酒瓶中間區域 */
-  margin-top: 50vh;   /* 酒瓶占中央 50% 高度 */
+  margin-top: 50vh; /* 酒瓶占中央區域 */
 }
 
-/* --- 統一卡片大小 + 更透明背景 --- */
+/* -------------------- 酒款卡片 -------------------- */
 .card {
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -168,87 +220,51 @@ body > *:not(.background-container) {
   align-items: center;
   position: relative;
   overflow: hidden;
-
-  /* 卡片固定大小（高度統一）*/
   width: 90%;
   max-width: 360px;
-  min-height: 180px;   /* 🔥 固定高度，所有卡片統一 */
-
+  min-height: 180px;
   padding: 14px;
   margin: 0 auto;
-
-  /* 🔥 更透明的玻璃卡片效果 */
-  background: rgba(255, 255, 255, 0.15); /* 透明度從 0.95 → 0.25 */
+  background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(12px);
-
   border-radius: 14px;
   border-left: 5px solid #C7A14A;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
-/* 右側圖片區高度固定 → 避免因文字變多壓縮 */
+.card-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  z-index: 2;
+}
+
 .card-image {
   width: 100%;
-  height: 120px;  
+  height: 120px;
   border-radius: 10px;
   background-size: cover;
   background-position: center;
   overflow: hidden;
 }
 
-/* 讓文字不要撐開卡片 */
-.card-content {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-/* 收藏按鈕永遠在下面 */
-.favorite-btn {
-  margin-top: auto;
-}
-
-
-/* --- 右側酒醉半透明背景（會填滿右側區塊） --- */
+/* 右側酒醉半透明背景 */
 .drunk-bg {
   position: absolute;
   right: 0;
   top: 0;
-  width: 70%;          /* 讓背景在右側佔比（可調） */
+  width: 70%;
   height: 100%;
-  opacity: 0.12;       /* 半透明強度 */
+  opacity: 0.12;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center right;
-  z-index: 1;          /* 在文字下方，但在卡片底色上方 */
+  z-index: 1;
   pointer-events: none;
 }
 
-
-/* 保持文字在最上面 */
-.card-content, .card-side {
-  position: relative;
-  z-index: 2;
-}
-
-/* 小螢幕改成垂直排列（手機友好） */
-@media (max-width: 720px) {
-  #results {
-    margin-top: 60vh; /* 手機比例較長，留更多空間給酒瓶 */
-  }
-  .card {
-    grid-template-columns: 1fr;  /* 變成上下堆疊，文字在上，圖在下 */
-  }
-  .card-image {
-    height: 160px;
-  }
-  .drunk-bg {
-    width: 60%;
-    opacity: 0.10;
-    right: -5%;
-    background-position: center;
-  }
-}
+/* -------------------- 收藏按鈕 -------------------- */
 .favorite-btn {
   margin-top: 8px;
   padding: 6px 12px;
@@ -258,6 +274,7 @@ body > *:not(.background-container) {
   color: #2E1F14;
   cursor: pointer;
   font-size: 13px;
+  transition: all 0.2s ease;
 }
 
 .favorite-btn.active {
@@ -268,46 +285,29 @@ body > *:not(.background-container) {
 .favorite-btn:hover {
   opacity: 0.9;
 }
-#showFavBtn {
-  background: #2E1F14;
-  color: #C7A14A;
-  border: none;
-  padding: 10px 12px;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-}
 
-#showFavBtn.active {
-  background: #C7A14A;
-  color: #2E1F14;
-}
+/* ==================== 拖曳排序功能 ==================== */
 
-
-/* ===== 拖曳排序相關樣式 ===== */
-
-/* 可拖曳的卡片 */
-.card.draggable {
+/* -------------------- 桌機版拖曳 -------------------- */
+@media (hover: hover) and (pointer: fine) {
+  .card.draggable {
     cursor: move;
     position: relative;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
+  }
 
-/* 滑鼠懸停效果 */
-.card.draggable:hover {
+  .card.draggable:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
+  }
 
-/* 正在拖曳時的樣式 */
-.card.dragging {
+  .card.dragging {
     opacity: 0.5;
     transform: scale(0.95);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-}
+  }
 
-/* 拖曳手把圖示 (☰) */
-.drag-handle {
+  .drag-handle {
     position: absolute;
     left: 10px;
     top: 10px;
@@ -318,38 +318,21 @@ body > *:not(.background-container) {
     z-index: 10;
     padding: 5px;
     line-height: 1;
-}
+  }
 
-.drag-handle:hover {
+  .drag-handle:hover {
     color: #666;
-}
+  }
 
-/* 為拖曳圖示留出空間 */
-.card.draggable .card-text h2 {
+  .card.draggable .card-text h2 {
     margin-left: 35px;
-}
+  }
 
-/* 拖曳時的游標 */
-.card.draggable:active {
+  .card.draggable:active {
     cursor: grabbing;
-}
+  }
 
-/* 手機觸控優化 */
-@media (max-width: 768px) {
-    .drag-handle {
-        font-size: 28px;
-        left: 8px;
-        top: 8px;
-        padding: 8px;
-    }
-    
-    .card.draggable .card-text h2 {
-        margin-left: 40px;
-    }
-}
-
-/* 觸控裝置的拖曳提示 */
-.card.draggable::before {
+  .card.draggable::before {
     content: '';
     position: absolute;
     top: 0;
@@ -358,9 +341,299 @@ body > *:not(.background-container) {
     bottom: 0;
     pointer-events: none;
     transition: background-color 0.2s;
-}
+  }
 
-.card.draggable:active::before {
+  .card.draggable:active::before {
     background-color: rgba(255, 255, 255, 0.1);
+  }
 }
 
+/* -------------------- 手機版拖曳 -------------------- */
+@media (hover: none) and (pointer: coarse) {
+  .card.draggable {
+    cursor: grab;
+    position: relative;
+    transition: box-shadow 0.2s ease, opacity 0.2s ease;
+  }
+
+  .card.draggable:hover {
+    transform: none !important;
+    box-shadow: none;
+  }
+
+  .card.dragging {
+    transform: none !important;
+    opacity: 0.6;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  .drag-handle {
+    font-size: 28px;
+    left: 8px;
+    top: 8px;
+    padding: 8px;
+  }
+
+  .card.draggable .card-text h2 {
+    margin-left: 40px;
+  }
+
+  .card.draggable:active {
+    cursor: grabbing;
+  }
+
+  .card.draggable::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    transition: background-color 0.2s;
+  }
+
+  .card.draggable:active::before {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* ==================== 無結果提示 ==================== */
+.no-result {
+  text-align: center;
+  padding: 60px 20px;
+  margin: -60vh auto 0 auto;
+  max-width: 600px;
+  color: #666;
+}
+
+.no-result p {
+  font-size: 20px;
+  margin: 15px 0;
+}
+
+.no-result p:first-child {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+}
+
+.no-result .hint {
+  font-size: 16px;
+  color: #433606e1;
+  margin-top: 10px;
+}
+
+/* -------------------- 收藏空狀態 -------------------- */
+.no-result.favorite-empty {
+  background: linear-gradient(
+    135deg,
+    rgba(30, 42, 74, 0.05),
+    rgba(18, 25, 45, 0.05)
+  );
+  border: 2px dashed rgba(199, 161, 74, 0.3);
+  border-radius: 12px;
+  padding: 80px 30px;
+}
+
+.no-result.favorite-empty p:first-child {
+  font-size: 28px;
+  color: #C7A14A;
+}
+
+.no-result.favorite-empty .hint {
+  color: rgba(199, 161, 74, 0.8);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* ==================== 回到頂端按鈕 ==================== */
+#scrollToTopBtn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 50%;
+  background-color: #1E2A4A;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 9999;
+}
+
+#scrollToTopBtn:hover {
+  background-color: #2A3B6A;
+  transform: translateY(-2px);
+}
+
+/* ==================== 手機版響應式設計 ==================== */
+@media (max-width: 768px) {
+  /* -------------------- 防止縮放問題 -------------------- */
+  input,
+  select,
+  textarea,
+  button {
+    font-size: 16px !important;
+  }
+
+  /* -------------------- 搜尋欄 -------------------- */
+  #search {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* 縮小狀態 */
+  #search.minimized {
+    min-height: 48px;
+    padding: 6px 14px;
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  #search.minimized .minimized-label {
+    display: flex;
+    align-items: center;
+    position: static;
+    transform: none;
+    font-size: 15px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 40%;
+  }
+
+  /* 被 JS 標記為空的元素才隱藏 */
+  #search.minimized .empty-hidden {
+    display: none !important;
+  }
+
+  #search.minimized #searchBtn {
+    margin-left: auto;
+    padding: 8px 20px;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  #search.minimized #showFavBtn {
+    padding: 8px 16px;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  /* 收藏模式縮小狀態 */
+  #search.favorite-mode.minimized {
+    background: linear-gradient(
+      135deg,
+      rgba(30, 42, 74, 0.95),
+      rgba(18, 25, 45, 0.95)
+    );
+  }
+
+  #search.favorite-mode.minimized #searchBtn,
+  #search.favorite-mode.minimized #showFavBtn {
+    border-color: rgba(199, 161, 74, 0.6);
+    color: #F5EBD7;
+  }
+
+  /* 展開狀態 */
+  #search.expanded {
+    height: auto;
+    display: flex;
+    flex-wrap: wrap;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  #search.expanded .minimized-label {
+    display: none;
+  }
+
+  #search.expanded input,
+  #search.expanded select {
+    display: block;
+    opacity: 1;
+    margin-right: 6px;
+    transition: opacity 0.3s ease 0.1s;
+  }
+
+  #search.expanded button {
+    display: block;
+    margin: 6px 4px;
+  }
+
+  /* 移除 focus 外框 */
+  #search input:focus,
+  #search select:focus {
+    outline: none;
+  }
+
+  /* -------------------- 結果區域 -------------------- */
+  #results {
+    margin-top: 60vh;
+  }
+
+  /* -------------------- 酒款卡片 -------------------- */
+  .card {
+    grid-template-columns: 1fr;
+  }
+
+  .card-image {
+    height: 160px;
+  }
+
+  .drunk-bg {
+    width: 60%;
+    opacity: 0.10;
+    right: -5%;
+    background-position: center;
+  }
+
+  /* -------------------- 無結果提示 -------------------- */
+  .no-result {
+    padding: 40px 15px;
+    margin-top: -50vh;
+  }
+
+  .no-result p:first-child {
+    font-size: 20px;
+  }
+
+  .no-result .hint {
+    font-size: 14px;
+  }
+
+  .no-result.favorite-empty {
+    padding: 60px 20px;
+  }
+
+  .no-result.favorite-empty p:first-child {
+    font-size: 24px;
+  }
+
+  /* -------------------- 回到頂端按鈕 -------------------- */
+  #scrollToTopBtn {
+    width: 44px;
+    height: 44px;
+    font-size: 22px;
+    bottom: 16px;
+    right: 16px;
+  }
+}
+
+/* ==================== 小螢幕優化 ==================== */
+@media (max-width: 720px) {
+  #results {
+    margin-top: 60vh;
+  }
+}

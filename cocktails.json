@@ -27,7 +27,7 @@
         "name_en": "Negroni",
         "name_zh": "內格羅尼",
         "base": "gin",
-        "strength": "medium",
+        "strength": "strong",
         "abv": 24,
         "ingredients": [
             "琴酒 Gin 30ml",
@@ -151,7 +151,7 @@
         "name_en": "Piña Colada",
         "name_zh": "椰林飄香",
         "base": "rum",
-        "strength": "light",
+        "strength": "medium",
         "abv": 13,
         "ingredients": [
             "白蘭姆酒 White Rum 45ml",
@@ -238,7 +238,7 @@
         "name_en": "Bloody Mary",
         "name_zh": "血腥瑪麗",
         "base": "vodka",
-        "strength": "medium",
+        "strength": "light",
         "abv": 12,
         "ingredients": [
             "伏特加 Vodka 45ml",
@@ -312,7 +312,7 @@
         "name_en": "Sidecar",
         "name_zh": "側車",
         "base": "brandy",
-        "strength": "medium",
+        "strength": "strong",
         "abv": 24,
         "ingredients": [
             "白蘭地 Brandy 50ml",
@@ -324,7 +324,7 @@
         "name_en": "Brandy Alexander",
         "name_zh": "白蘭地亞歷山大",
         "base": "brandy",
-        "strength": "light",
+        "strength": "medium",
         "abv": 16,
         "ingredients": [
             "白蘭地 Brandy 30ml",
@@ -436,7 +436,7 @@
     {
         "name_en": "Caipirinha",
         "name_zh": "卡琵莉亞",
-        "base": "rum",
+        "base": "liqueur",
         "strength": "medium",
         "abv": 18,
         "ingredients": [
@@ -523,7 +523,7 @@
     {
         "name_en": "Kir Royale",
         "name_zh": "皇家基爾",
-        "base": "wine",
+        "base": "Champagne",
         "strength": "light",
         "abv": 10,
         "ingredients": [
@@ -545,7 +545,7 @@
     {
         "name_en": "Mimosa",
         "name_zh": "含羞草",
-        "base": "wine",
+        "base": "Champagne",
         "strength": "light",
         "abv": 6,
         "ingredients": [
@@ -556,7 +556,7 @@
     {
         "name_en": "Americano",
         "name_zh": "美國佬",
-        "base": "aperol",
+        "base": "Campari",
         "strength": "light",
         "abv": 11,
         "ingredients": [
@@ -608,7 +608,7 @@
         "name_en": "French 75",
         "name_zh": "法式75",
         "base": "gin",
-        "strength": "light",
+        "strength": "medium",
         "abv": 14,
         "ingredients": [
             "琴酒 Gin 30ml",
@@ -698,7 +698,7 @@
         "name_en": "Bramble",
         "name_zh": "黑莓棘",
         "base": "gin",
-        "strength": "light",
+        "strength": "medium",
         "abv": 15,
         "ingredients": [
             "琴酒 Gin 40ml",
@@ -904,7 +904,7 @@
         "name_en": "El Presidente",
         "name_zh": "總統",
         "base": "rum",
-        "strength": "medium",
+        "strength": "strong",
         "abv": 24,
         "ingredients": [
             "白蘭姆酒 White Rum 45ml",
@@ -1058,7 +1058,7 @@
         "name_en": "Harvey Wallbanger",
         "name_zh": "哈維撞牆",
         "base": "vodka",
-        "strength": "light",
+        "strength": "medium",
         "abv": 14,
         "ingredients": [
             "伏特加 Vodka 45ml",
@@ -1097,7 +1097,7 @@
         "name_en": "Japanese Cocktail",
         "name_zh": "日本雞尾酒",
         "base": "brandy",
-        "strength": "medium",
+        "strength": "strong",
         "abv": 24,
         "ingredients": [
             "干邑白蘭地 Cognac 60ml",
@@ -1122,7 +1122,7 @@
         "name_en": "Grasshopper",
         "name_zh": "綠色蚱蜢",
         "base": "liqueur",
-        "strength": "light",
+        "strength": "medium",
         "abv": 14,
         "ingredients": [
             "薄荷利口酒 Crème de Menthe 30ml",
@@ -1134,7 +1134,7 @@
         "name_en": "Golden Cadillac",
         "name_zh": "金色凱迪拉克",
         "base": "liqueur",
-        "strength": "light",
+        "strength": "medium",
         "abv": 14,
         "ingredients": [
             "加利安諾利口酒 Galliano 30ml",
@@ -1146,7 +1146,7 @@
         "name_en": "Bamboo",
         "name_zh": "斑布/竹子",
         "base": "wine",
-        "strength": "light",
+        "strength": "medium",
         "abv": 16,
         "ingredients": [
             "雪莉酒 Sherry 45ml",
@@ -1231,7 +1231,7 @@
         "name_en": "Adonis",
         "name_zh": "阿多尼斯",
         "base": "wine",
-        "strength": "light",
+        "strength": "medium",
         "abv": 15,
         "ingredients": [
             "雪莉酒 Sherry 45ml",
