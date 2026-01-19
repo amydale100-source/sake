@@ -26,19 +26,40 @@ window.addEventListener('DOMContentLoaded', async () => {
 });
 
 // ==================== 背景動態切換 ====================
-const background = document.querySelector('.background-container');
-const baseSelect = document.getElementById('baseSelect');
+document.addEventListener('DOMContentLoaded', () => {
+    const background = document.querySelector('.background-container');
+    const baseSelect = document.getElementById('baseSelect');
+    const showFavBtn = document.getElementById('showFavBtn');
 
-baseSelect.addEventListener('change', () => {
-    const base = baseSelect.value.toLowerCase();
-    
-    if (base && base !== 'other') {
-        background.style.backgroundImage = `url('images/bg/${base}.jpg')`;
-    } else {
-        // 移除 inline style,讓 CSS 預設背景生效
-        background.style.backgroundImage = '';
+    function isFavoriteMode() {
+        return showFavBtn.classList.contains('active');
     }
+
+    function updateBackground() {
+        if (isFavoriteMode()) {
+            background.style.backgroundImage =
+                "url('images/bg/back.jpg')";
+            return;
+        }
+
+        const base = baseSelect.value.toLowerCase();
+
+        if (base && base !== 'other') {
+            background.style.backgroundImage =
+                `url('images/bg/${base}.jpg')`;
+        } else {
+            background.style.backgroundImage = '';
+        }
+    }
+
+    baseSelect.addEventListener('change', updateBackground);
+
+    showFavBtn.addEventListener('click', () => {
+        updateBackground();
+    });
 });
+
+
 
 // ==================== 搜尋與篩選邏輯 ====================
 
@@ -347,94 +368,132 @@ function setupDragEvents(card) {
         saveFavoriteOrder();
     });
 }
-
 /**
- * 設定手機版觸控拖曳事件
+ * 設定手機版拖曳事件
  * @param {HTMLElement} card - 卡片元素
  */
 function setupTouchDrag(card) {
-    let startY, startX;
-    let currentCard = null;
+    let startX = 0, startY = 0;
     let longPressTimer = null;
+    let placeholder = null;
+    let offsetY = 0;
 
+    /* ---------- touchstart ---------- */
     card.addEventListener('touchstart', function(e) {
-        if (e.touches.length > 1) return;
-        
-        startY = e.touches[0].clientY;
-        startX = e.touches[0].clientX;
-        currentCard = this;
-        
+        if (e.touches.length !== 1) return;
+
+        const touch = e.touches[0];
+        startX = touch.clientX;
+        startY = touch.clientY;
+
         longPressTimer = setTimeout(() => {
-            if (currentCard) {
-                currentCard.classList.add('dragging');
-                if (navigator.vibrate) {
-                    navigator.vibrate(50);
-                }
-            }
+            card.classList.add('dragging');
+
+            const rect = card.getBoundingClientRect();
+
+            // 建立 placeholder
+            placeholder = document.createElement('div');
+            placeholder.className = 'card drag-placeholder';
+            placeholder.style.height = rect.height + 'px';
+            placeholder.style.visibility = 'hidden';
+            card.parentElement.insertBefore(placeholder, card);
+
+            // 計算手指在卡片上的偏移
+            offsetY = touch.clientY - rect.top;
+
+            // 脫離文件流
+            card.style.position = 'fixed';
+            card.style.top = rect.top + 'px';
+            card.style.left = rect.left + 'px';
+            card.style.width = rect.width + 'px';
+            card.style.zIndex = 9999;
+            card.style.pointerEvents = 'none';
+
+            if (navigator.vibrate) navigator.vibrate(50);
         }, 300);
     });
 
+    /* ---------- touchmove ---------- */
     card.addEventListener('touchmove', function(e) {
-        if (longPressTimer && !this.classList.contains('dragging')) {
-            const touch = e.touches[0];
-            const moveX = Math.abs(touch.clientX - startX);
-            const moveY = Math.abs(touch.clientY - startY);
-            
-            if (moveX > 10 || moveY > 10) {
-                clearTimeout(longPressTimer);
-                longPressTimer = null;
-            }
-            return;
-        }
-        
-        if (!this.classList.contains('dragging')) return;
-        
+        if (!card.classList.contains('dragging')) return;
         e.preventDefault();
-        
+
         const touch = e.touches[0];
-        startAutoScroll(touch.clientY);
-        
-        const elementAtPoint = document.elementFromPoint(touch.clientX, touch.clientY);
-        const targetCard = elementAtPoint?.closest('.card.draggable');
-        
-        if (targetCard && targetCard !== this) {
-            const cards = Array.from(this.parentElement.children);
-            const currentIndex = cards.indexOf(this);
-            const targetIndex = cards.indexOf(targetCard);
-            
-            if (targetIndex > currentIndex) {
-                targetCard.parentElement.insertBefore(this, targetCard.nextSibling);
-            } else {
-                targetCard.parentElement.insertBefore(this, targetCard);
+        if (typeof startAutoScroll === 'function') startAutoScroll(touch.clientY);
+
+        // 卡片跟著手指移動
+        card.style.top = touch.clientY - offsetY + 'px';
+
+        const container = card.parentElement;
+        if (!container || !placeholder) return;
+
+        const cards = Array.from(
+            container.querySelectorAll('.card.draggable:not(.dragging):not(.drag-placeholder)')
+        );
+
+        let insertBeforeNode = null;
+        for (const c of cards) {
+            const rect = c.getBoundingClientRect();
+            const middle = rect.top + rect.height / 2;
+            if (touch.clientY < middle) {
+                insertBeforeNode = c;
+                break;
             }
+        }
+
+        if (insertBeforeNode) {
+            container.insertBefore(placeholder, insertBeforeNode);
+        } else {
+            container.appendChild(placeholder);
         }
     }, { passive: false });
 
+    /* ---------- touchend ---------- */
     card.addEventListener('touchend', function() {
         if (longPressTimer) {
             clearTimeout(longPressTimer);
             longPressTimer = null;
         }
-        
-        if (this.classList.contains('dragging')) {
-            this.classList.remove('dragging');
-            stopAutoScroll();
-            saveFavoriteOrder();
+        if (!card.classList.contains('dragging')) return;
+
+        card.classList.remove('dragging');
+        if (typeof stopAutoScroll === 'function') stopAutoScroll();
+
+        // 移回 placeholder
+        if (placeholder && placeholder.parentElement) {
+            placeholder.parentElement.insertBefore(card, placeholder);
+            placeholder.remove();
         }
-        currentCard = null;
+
+        // 還原樣式
+        card.style.position = '';
+        card.style.top = '';
+        card.style.left = '';
+        card.style.width = '';
+        card.style.zIndex = '';
+        card.style.pointerEvents = '';
+
+        placeholder = null;
+        if (typeof saveFavoriteOrder === 'function') saveFavoriteOrder();
     });
 
+    /* ---------- touchcancel ---------- */
     card.addEventListener('touchcancel', function() {
-        if (longPressTimer) {
-            clearTimeout(longPressTimer);
-            longPressTimer = null;
-        }
-        
-        this.classList.remove('dragging');
-        stopAutoScroll();
-        currentCard = null;
+        if (longPressTimer) clearTimeout(longPressTimer);
+        card.classList.remove('dragging');
+        if (typeof stopAutoScroll === 'function') stopAutoScroll();
+
+        if (placeholder && placeholder.parentElement) placeholder.remove();
+        card.style.position = '';
+        card.style.top = '';
+        card.style.left = '';
+        card.style.width = '';
+        card.style.zIndex = '';
+        card.style.pointerEvents = '';
+        placeholder = null;
     });
 }
+
 
 // -------------------- 拖曳自動滾動 --------------------
 
@@ -543,35 +602,46 @@ function stopAutoScroll() {
     }
 
     // -------------------- 滾動處理 --------------------
-    const SCROLL_TRIGGER_Y = 40;  // 觸發門檻
-    const SCROLL_DIFF = 3;         // 滾動差距門檻
-    const DEBOUNCE_MS = 16;        // 防抖延遲
+    const SCROLL_TRIGGER_Y = 48;   // 觸發縮小的起始高度
+    const COLLAPSE_DIFF = 16;     // 向下縮小（手指要有明確意圖）
+    const EXPAND_DIFF = 48;       // 向上展開（比縮小更難）
+    const DEBOUNCE_MS = 32;       // 1 frame + 緩衝
 
     function handleScroll() {
-        // 🔥 如果手動展開中,不執行縮小
-        if (isManuallyExpanded) return;
+    if (isManuallyExpanded) return;
 
-        // 桌機版考慮 focus 狀態
-        if (window.innerWidth > 768 && searchInputs.includes(document.activeElement)) {
-            return;
-        }
-
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        const diff = scrollTop - lastScrollTop;
-
-        if (scrollTop > SCROLL_TRIGGER_Y && diff > SCROLL_DIFF) {
-            // 向下滾動 → 縮小
-            searchSection.classList.add('minimized');
-            updateMinimizedDisplay();
-            updateFieldVisibility();
-        } else if (diff < -SCROLL_DIFF) {
-            // 向上滾動 → 展開
-            searchSection.classList.remove('minimized');
-            updateFieldVisibility();
-        }
-
-        lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+    if (window.innerWidth > 768 &&
+        searchInputs.includes(document.activeElement)) {
+        return;
     }
+
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const diff = scrollTop - lastScrollTop;
+    const isMinimized = searchSection.classList.contains('minimized');
+
+    // --------- 向下滑：只在「尚未縮小」時觸發 ---------
+    if (
+        !isMinimized &&
+        scrollTop > SCROLL_TRIGGER_Y &&
+        diff > COLLAPSE_DIFF
+    ) {
+        searchSection.classList.add('minimized');
+        updateMinimizedDisplay();
+        updateFieldVisibility();
+    }
+
+    // --------- 向上滑：只在「已縮小」時，且滑很多才展開 ---------
+    if (
+        isMinimized &&
+        diff < -EXPAND_DIFF
+    ) {
+        searchSection.classList.remove('minimized');
+        updateFieldVisibility();
+    }
+
+    lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+}
+
 
     window.addEventListener(
         'scroll',
@@ -640,7 +710,6 @@ function stopAutoScroll() {
         });
     });
 })();
-
 // ==================== 回到頂端按鈕 ====================
 (function() {
     const btn = document.getElementById('scrollToTopBtn');
@@ -662,5 +731,4 @@ function stopAutoScroll() {
             behavior: 'smooth'
         });
     });
-
 })();
