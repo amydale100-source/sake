@@ -1238,5 +1238,18 @@
             "甜苦艾酒 Sweet Vermouth 45ml",
             "橙味苦精 Orange Bitters 2 dashes"
         ]
-    }
+    },
+    {
+    "name_en": "Snow Country",
+    "name_zh": "雪國",
+    "base": "vodka",
+    "strength": "medium",
+    "abv": 20,
+    "ingredients": [
+        "伏特加 Vodka 45ml",
+        "橙酒 Cointreau 15ml",
+        "檸檬汁 Lemon juice 20ml",
+        "糖霜杯口 Sugar rim"
+    ]
+}
 ]
